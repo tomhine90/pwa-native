@@ -1,0 +1,120 @@
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width minimum-scale=1.0 maximum-scale=1.0 user-scalable=no" />
+		<title>Content Pages</title>
+		<link type="text/css" rel="stylesheet" href="./css/style.css" />
+		<link type="text/css" rel="stylesheet" href="./dist/mmenu-light.css" />
+		<link type="text/css" rel="stylesheet" href="./css/pages.css" />
+		<!--class declaration--> 
+  		<script src="./js/page.js" ></script>
+<!--include module for editor--> 
+	
+	</head>
+	<body>
+		<div id="page">
+			<div class="header" id="header">
+				<a href="#menu"><span></span></a>Demo
+				<nav id="menu" class="mm">
+				<span>Search  <input type="search" name="searchbox"/></span>
+					<ul>
+						<li class="Selected"><a href="/">Home</a></li>
+						<li><span>About us</span>
+							<ul>
+								<li><a class="content" href="#about/history">History</a></li>
+								<li><span>The team</span>
+									<ul>
+										<li><a class="content" href="#about/team/management">Management</a></li>
+										<li><a class="content" href="#about/team/sales">Sales</a></li>
+										<li><a class="content" href="#about/team/development">Development</a></li>
+									</ul>
+								</li>
+								<li><a class="content" href="#about/address">Our address</a></li>
+							</ul>
+						</li>
+						<li><a class="content"href="#contact">Contact</a></li>
+					</ul>
+				</nav>
+			</div>
+			<!--//end of header-->
+			<!--change content according to passed value-->
+			<div class="content main">
+				<h3>Title</h3><br />
+				<p id="content">
+				<div class="element"></div>
+					Try to extend the cotnent across the page so that when you click on it - it closes the menu... blah blah 
+					Try to extend the cotnent across the page so that when you click on it - it closes the menu... blah blah 
+					Try to extend the cotnent across the page so that when you click on it - it closes the menu... blah blah 
+					Try to extend the cotnent across the page so that when you click on it - it closes the menu... blah blah 
+				</p>
+			</div>
+		</div>
+
+		<script src="./js/mmenu-light.js"></script>
+		<script src="./js/mmenu-page.js"></script>		
+<!--include module for editor--> 
+
+<!--my custom scripting--> 
+		<script>
+	// creating an object
+	var urlParams = new URLSearchParams(window.location.search);
+	//class declaration
+	let page1 = new Page(urlParams.get('name'));
+	//based on value then set background colors and menu
+	switch(page1.name) {
+	    case 'primary':  
+	        // body of case 1
+			page1.backgroundColor = "#1a2238"
+			//loadPrimary Navigation etc  json file
+	        break;
+	
+	    case 'final':  
+	        // body of case 2
+			page1.backgroundColor = "#490b3d"
+	        break;
+	
+	    case 'ficm':
+	        // body of case N
+			page1.backgroundColor = "#ff6a3d"
+	        break;	
+    	default:
+        // body of default
+	}
+
+//TESTING
+console.log(page1.name); // John
+console.log(page1.bgcolor); // John
+document.getElementById("header").style.backgroundColor = page1.bgcolor; 
+
+populate();
+
+async function populate() {
+  const requestURL = '/assets/testdata.json';
+  const request = new Request(requestURL);
+  const response = await fetch(request);
+  const menuData = await response.json();
+  populateMenu(menuData);
+
+  const requestPageURL = '/assets/testpagedata.json';
+  const requestPage = new Request(requestPageURL);
+  const responsePage = await fetch(requestPage);
+  const pageData = await responsePage.json();
+  populatePage(pageData);
+}
+
+function populateMenu(obj) {
+  const header = document.querySelector('h3');
+console.log(obj['pageName']); // John
+  header.textContent = obj['pageName'];
+}
+function populatePage(obj){
+	const myPara = document.getElementById("content");
+	myPara.textContent = `Hometown: ${obj['homeTown']} // Formed: ${obj['formed']}`;
+  	//header.appendChild(myPara);
+
+}
+
+</script>
+
+</body>
+</html>
