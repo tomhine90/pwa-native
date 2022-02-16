@@ -98,7 +98,7 @@ async function populate() {
   const menuData = await response.json();
   populateMenu(menuData);
 
-  const requestPageURL = '/assets/testpagedata.json';
+  const requestPageURL = './assets/testpagedata.json';
   const requestPage = new Request(requestPageURL);
   const responsePage = await fetch(requestPage);
   const pageData = await responsePage.json();
