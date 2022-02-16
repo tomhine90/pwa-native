@@ -1,10 +1,6 @@
 let cacheName = "pwa-app-native";
 let filesToCache = 
-["./", "./index.html", "./pages.html","./manifest.json", 
-"./css/pages.css",
-"./css/site.css",
-"./css/pages.css"
-]; //removed "./js/main.js"
+["./index.html", "./pages.html","./manifest.json", "./css/pages.css","./css/site.css"]; 
 
 /* Start the service worker and cache all of the app's content */
 self.addEventListener("install", (e) => {
