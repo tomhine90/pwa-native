@@ -1,6 +1,6 @@
 let cacheName = "pwa-app-native";
 let filesToCache = 
-["/","./", "./index.html", "./pages.html","./manifest.json", 
+["./", "./index.html", "./pages.html","./manifest.json", 
 "./css/pages.css",
 "./css/site.css",
 "./css/pages.css"
