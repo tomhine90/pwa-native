@@ -92,7 +92,7 @@ document.getElementById("header").style.backgroundColor = page1.bgcolor;
 populate();
 
 async function populate() {
-  const requestURL = '/assets/testdata.json';
+  const requestURL = './assets/testdata.json';
   const request = new Request(requestURL);
   const response = await fetch(request);
   const menuData = await response.json();
