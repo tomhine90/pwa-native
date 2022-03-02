@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Fetch Auth</title>
+    <script>
+    function fetchAuth () {
+      // (A) URL & CREDENTIALS
+      var url = "protected/secret.html",
+          credentials = btoa("USER:PASS");
+
+      // (B) FETCH WITH HTTP AUTH
+      fetch (url, {
+        headers: {
+          "Authorization": `Basic ${credentials}`
+        }
+      })
+
+      // (C) SERVER RESPONSE
+      .then((result) => {
+        if (result.status != 200) { throw new Error("Bad Server Response"); }
+        return result.text();
+      })
+      .then((response) => {
+        document.getElementById("demoShow").innerHTML = response;
+      })
+
+      // (D) HANDLE ERRORS (OPTIONAL)
+      .catch((error) => { console.log(error); });
+    }
+    </script>
+  </head>
+  <body>
+    <div id="demoShow"></div>
+    <input type="button" value="Fetch Auth" onclick="fetchAuth()"/>
+  </body>
+</html>

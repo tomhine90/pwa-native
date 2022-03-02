@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+<title>SimpleIDB demo</title>
+<!-- (A) LOAD FILE SAVER -->
+<!-- https://cdnjs.com/libraries/FileSaver.js -->
+<!-- https://github.com/eligrey/FileSaver.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+ 
+<script>
+</script>
+<script type="text/javascript" src="SimpleIDB.js"></script>
+<style>
+    body {
+        margin:48px;
+    }
+</style>
+</head>
+<script src="https://cdn.tiny.cloud/1/4rrbtndutqxpbakupzlul90fcyl9yj8mk9bp9aveo9jd55jo/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+    tinymce.init({
+      selector: '#addcontent',
+		plugins: 'table code advtable lists fullscreen',
+  		toolbar: 'undo redo | formatselect | bold italic | ' +
+    'alignleft aligncenter alignright alignjustify | indent outdent | ' +
+    'table tableinsertdialog tablecellprops tableprops advtablerownumbering | fullscreen',
+  		content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+    });
+//selector: 'textarea#default'
+
+  </script>
+<body>
+
+<h1>SimpleIDB demo</h1>
+<p>Demo of the interface to IndexedDB.</p>
+<p>Start with importing a file to an IndexedDB database, display its content, and then access the records.</p>
+<h2>Fill and dump</h2>
+<!--/////////////////////////////////////////////////////////////-->
+<!--READ THE RECORD--> 
+<div id="storage"></div>
+<h2>Read</h2>
+<p>Enter the name of a fruit (apple, orange, strawberry, blueberry) to get the infos. </p>
+<p>
+<form name="form1" method="post" action="">
+  <input type="text"  id="searchval">
+  <input type="button" value="Search" onClick="search()">
+</form>
+</p>
+<fieldset><legend>Read database</legend>
+<div id="storageR"></div>
+</fieldset>
+
+<!--/////////////////////////////////////////////////////////////-->
+<!-- ADD THE RECORD--> 
+<h2>Add/Replace a record</h2>
+<p>Enter the description of another page to add it or replace it.</p>
+<p>
+<form name="form1" method="post" action="">
+<!--NEED TO ADD ID, NAME, PARENTID--> 
+<!--GET GREATEST NO FROM DATABASE AND ADD 1-->
+<!-- IF I TAKE THE ID OF CURRENT and any page added would be child page-->
+  ID <input type="text"  id="addid">
+  ParentID <input type="text"  id="addparentid">
+  PageID <input type="text"  id="addpageid">
+  Name <input type="text"  id="addname">
+	<textarea id="addcontent" name="addcontent">
+    </textarea>
+  <input type="button" value="Add it" onClick="add()">
+</form>
+</p>
+<fieldset><legend>New content</legend>
+<div id="storageA"></div>
+</fieldset>
+<!-- FINISHED ADDING--> 
+<button class="file-button" onclick="saveFile()">Save As</button>
+
+
+<h2>Delete a record</h2>
+<p>Enter the name of a page to be removed from the database.</p>
+<p>
+<form name="form1" method="post" action="">
+  Name <input type="text"  id="delname">
+  <input type="button" value="Delete it" onClick="remove()">
+</form>
+</p>
+<fieldset><legend>New content</legend>
+<div id="storageD"></div>
+</fieldset>
+
+<script>
+var cidb = new SimpleIDB()
+
+async function displayAll(cidb, storage) {
+    var idb = await cidb.open("menu", "fstore", {keyPath: "name", autoIncrement:false})
+	var cont = await cidb.dump(idb, "fstore")
+	var storage = document.getElementById(storage)
+	storage.innerHTML=""
+	for(var x of cont) {
+        storage.innerHTML += "id= " + x["id"] + " parentid= " + x["parentid"] +  " pageid= " + x["pageid"] + " name= " + x["name"]  + "<br>"	    
+	}    
+}
+function saveFile (){
+	// (B) "SAVE AS"
+	var blob = new Blob(["Hello, world!"], {type: "text/plain;charset=utf-8"});
+    saveAs(blob, "hello world.txt");
+	//var myFile = new File("testing saving a file", "demo.txt", {type: "text/plain;charset=utf-8"});
+	//saveAs(myFile);
+}
+
+//fname = fruits.js //json file 
+//why aren't we using .then'
+async function start(fname) {
+	var response = await fetch(fname)
+	var str = await response.text();
+//console.log(str);
+	var data = JSON.parse(str)
+    var idb = await cidb.open("menu", "fstore",  {
+            schema: { keyPath: "name", autoIncrement:false },
+	        index: 
+	            [
+	                ["id", "id", { unique: true }],
+	                ["parentid", "parentid", { unique: false }] 
+	           ]     
+	          
+        })
+	await cidb.fill(idb, "fstore", data["menu"])
+    displayAll(cidb, "storage")
+}
+//start it all off (see above function)
+window.onload= start("menu.js")
+
+async function search() {
+	var key = document.getElementById("searchval").value
+	var infos = await cidb.read("fstore", key)
+	document.getElementById("storageR").innerHTML = JSON.stringify(infos, null, ' ')
+}    
+
+async function add() {
+	let id = document.getElementById("addid").value
+	let parentid = document.getElementById("addparentid").value
+	let pageid = document.getElementById("addpageid").value
+	let name = document.getElementById("addname").value
+	let content = document.getElementById("addcontent").value
+	let obj = { "name": name, "id": id, "parentid": parentid, "pageid": pageid, "content": tinyMCE.activeEditor.getContent() }
+	await cidb.write("fstore", obj)
+    displayAll(cidb, "storageA")	
+} 
+
+async function remove() {
+	let name = document.getElementById("delname").value
+	await cidb.remove("fstore", name)
+    displayAll(cidb, "storageD")	
+} 
+
+</script>
+
+<p>&copy; 2018 Scriptol.com</p>
+</body>
+</html>

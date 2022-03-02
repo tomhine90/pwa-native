@@ -1,0 +1,77 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="white" />
+
+<link rel="shortcut icon" type="image/jpg" href="./favicon.ico"/>
+
+  <link href="https://fonts.googleapis.com/css?family=Lexend+Exa&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="manifest" href="./manifest.json">
+  
+  <script src="./js/page.js"></script>
+<script>
+window.addEventListener('load', ()=>{
+    console.log("in window load");	
+	if ("serviceWorker" in navigator) {
+	    try {
+      		navigator.serviceWorker.register('./serviceWorker.js');
+      		console.log("Service Worker Registered");
+    	} catch (error) {
+      		console.log("Service Worker Registration Failed");
+		}
+    }else{
+	    console.log("Service Worker not supported?");
+	}
+});
+</script>
+
+
+  <title>Stack</title>
+</head>
+<!--
+	trial of update of new content
+	Promises are the new style of async code that you'll see used in modern Web APIs. 
+	A good example is the fetch() API, which is basically like a modern, more efficient version of XMLHttpRequest. 
+	Let's look at a quick example, from our Fetching data from the server article:
+	--> 
+<body>
+  <div class="app">
+    <header> <!--header tag only exists on homepage-->
+      <h1><image src="./favicon.ico" alt="picture of stack of papers"/> STACK</h1>
+      <p> </p>
+    </header>
+    <div class="pads">
+      <div class="pad-top">
+          <div class="pad1"><a href="pages?name=primary"><p>FRCA Primary</p></a>
+            <!--<audio class="sound" src="./sounds/bubbles.mp3"></audio>-->
+          </div>
+          <div class="pad2"><a href="pages?name=final"><p>FRCA Final</a></p>
+            <!--<audio class="sound" src="./sounds/clay.mp3"></audio>-->
+          </div>
+          <div class="pad3"><a href="pages?name=ficm"><p>FICM</a></p>
+            <!--<audio class="sound" src="./sounds/confetti.mp3"></audio>-->
+          </div>
+      </div>
+      <div class="pad-bottom">
+        <div class="pad4"><p>Pain</p>
+          <!--<audio class="sound" src="./sounds/glimmer.mp3"></audio>-->
+        </div>
+        <div class="pad5">
+          <!--<audio class="sound" src="./sounds/moon.mp3"></audio>-->
+        </div>
+        <div class="pad6">
+          <!--<audio class="sound" src="./sounds/ufo.mp3"></audio>-->
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+</body>
+</html>
+
