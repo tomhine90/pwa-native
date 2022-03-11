@@ -1,46 +1,47 @@
+/*if you take this away then the four lines for the drop-down call reduce in width */
 *{
 	 box-sizing: content-box;
 }
+
 body {
 	font-size: 14px;
 	line-height: 22px;
 	color: #666;
-	position: relative;
+	/*position: relative;*/
 	-webkit-text-size-adjust: none;
 }
-.header nav {
-	display: none;
-}
-.mainContent{
-	padding-left:2em;
-}
+
 .content {
 	padding: 10px 50px 50px 50px;
 	text-align: left;
+	height:100%;
 }
-.main {
-}
-#page,#header{
-}
-.header,
+#header,
 .footer {
 	text-align: center;
 }
-.header,
+[aria-expanded="false"] ul{
+  display:none;
+}
+[aria-expanded="true"] ul{
+  display:block;
+}
+#header,
 .footer {
 	background: #4bb5ef;
-	font-size: 16px;
-	font-weight: bold;
-	color: #fff;
 	line-height: 50px;
-
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	width: 100%;
 	height: 50px;
 	padding: 0 50px;
 }
-.header.fixed {
+#header div.text{
+	font-size: 16px;
+	font-weight: bold;
+	color: #fff;
+}
+#header.fixed {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -50,7 +51,8 @@ body {
 	bottom: 0;
 	left: 0;
 }
-.header a {
+/*just need this for the white lines box*/
+#header a.menulines {
 	display: block;
 	width: 28px;
 	height: 18px;
@@ -60,46 +62,52 @@ body {
 	top: 0;
 	left: 0;
 }
-.header a:before,
-.header a:after {
+
+#header a:before,
+#header a:after {
 	content: '';
 	display: block;
 	background: #fff;
 	height: 2px;
 }
-.header a span {
+#header a span {
 	background: #fff;
 	display: block;
 	height: 2px;
 	margin: 6px 0;
 }
+/*collapsable*/
+.collapsible {
+  background-color: #777;
+  color: white;
+  cursor: pointer;
+padding: 10px 0px 10px 10px;
+margin-top:5px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
 
-#page{
+.section1{
+	background-color: #1a2238;	
 }
-#menu{
-	background-color:white;
+.section8{
+	background-color: #490b3d;	
 }
-#menu span input{
-	border: solid grey 3px;
+.section14{
+	background-color: #ff6a3d;	
 }
-#menu, .mm-ocd__content, .mm-ocd--open{
-	width:20em;
-}
-.mm-ocd--open{
-	background: rgb(0 0 0 / 0%);
 
+.active, .collapsible:hover {
 }
-.mmc-ocd{
-	transition-property: bottom, fff;
-}
-.mm-ocd__content{
-}
-.mm-ocd--open{
-	/*appears to go around multiple and wider than the menu*/
-}
-.mm-ocd__backdrop{
-	/*appears to go around multiple and wider than the menu*/
-}
-.mm-spn{
-	/*appears to go around multiple elements*/
+
+.col_content {
+padding: 0px 0px 0px 10px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+width:100%;
 }
