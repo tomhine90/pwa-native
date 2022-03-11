@@ -1,0 +1,98 @@
+.sidenav{
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  /*top: 0;*/
+  left: 0;
+  background-color: white;
+  overflow-x: hidden;
+  transition: 0.2s;
+/*resetting some text values from pages.css*/
+line-height: 3em;
+font-size: 1em;
+}
+#header .sidenav a:before,
+#header .sidenav a:after {
+/*	content: '';
+	display: block;
+	background: #fff;*/
+	height: 0px;
+}
+
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+.sidenav a {
+  text-decoration: none;
+  font-size: 100%;
+  color: grey;
+  display: block;
+  transition: 0.2s;
+text-align:left;
+}
+div.right-align{
+    float: right;
+    margin-right: 1em;
+}
+.sidenav a:hover {
+  color: grey;
+}
+.sidenav #searchbox{
+	border: solid black 1px;
+	margin:10px;
+	margin-left:15px;
+	display: block;
+}
+
+#menu {
+	color: #444;
+	background: white;
+	width:100%;
+	height:100%;
+}
+#menu ul{
+	width:100%;
+	list-style:none;
+	padding-left:1px;
+}
+#menu ul li{
+	padding-left:10px;
+	border-top:solid #f3f3f3 2px;
+	width:95%;
+}
+#menu li.hide{
+	display:none;
+}
+#menu li.show{
+	display:block;
+}
+li[aria-expanded="true"] ul li{
+	display:block;
+}
+li[aria-expanded="false"] ul li{
+	display:none;
+}
+
+#menu #html_menu li.currentpage a.currentpage{
+	/*background-color: #f0f0f0;*/
+	font-weight:600;
+}
+#menu #html_menu li.currentpage ul{
+}
+/**/
+#main {
+  transition: margin-left .5s;
+  padding: 16px;
+}
+.display_inline{
+	display:inline;
+}
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
