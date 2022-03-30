@@ -1,0 +1,10 @@
+[{"id":"23","name":"Basic Monotoring","content":"<p></p>","question1":"","contents1":"","question2":"","contents2":"","question3":"","contents3":"","question4":"","contents4":"", 
+"tag": ["critical care", "course", "icm", "cc"], 
+"questions": [
+		    {"question": "testing question", "contents": "testing content"}, 
+		{"question": "testing question 2 ", "contents": "testing content"}, 
+		{"question": "testing question 3", "contents": "testing content"}
+
+		]
+}]
+
