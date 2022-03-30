@@ -11,6 +11,7 @@
 /*resetting some text values from pages.css*/
 line-height: 3em;
 font-size: 1em;
+z-index:9999;
 }
 #header .sidenav a:before,
 #header .sidenav a:after {

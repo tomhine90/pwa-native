@@ -6,104 +6,150 @@
 		<link rel="shortcut icon" type="image/jpg" href="./favicon.ico"/>
 
 		<link type="text/css" rel="stylesheet" href="./css/style.css" />
-		<link type="text/css" rel="stylesheet" href="./css/mmenu-light.css" />
 		<link type="text/css" rel="stylesheet" href="./css/pages.css" />
+
+		<link type="text/css" rel="stylesheet" href="./css/menu.css" />
 		
 		<link rel="manifest" href="./manifest.json">
 		<!--class declaration--> 
   		<script src="./js/cPage.js" ></script>
   		<script src="./js/cMenu.js" ></script>
+
 		<!--include module for editor--> 
 	</head>
 	<body>
 		<div id="page">
 			<div class="header" id="header">
 				<!--//-->
-				<a href="#menu"><span></span></a>Demo
-
-				<nav id="menu" class="mm">
-				<span>Search  <input type="search" name="searchbox"/></span>
-					<ul><!--https://snowgecko.github.io/pwa-native/pages?name=final-->
-						<li class="Selected"><a href="./">Home</a></li>
-						<div id="html_menu">
-						</div>	
-<!-- can use prevent default to only click through (change page if javascript is turned off)-->
-<!-- then update page contents and url dynamically-->
-<!-- and set up the menu so that it expands to the right point based on url -->
-
-<li><span><a href="/pages.html?id=1">Physiology</a></span>
-	<ul><li><a href="/pages.html?id=1">sub physiology</a></li></ul></li><li><span>Physics</span></li>
-<li><span>Pharmacology</span>
-	<ul><li>sub Pharmacology 5</li>
-	<li>sub Pharmacology 6</li>
-	</ul>
-</li>
-
-
-						<!--fixed menu item-->
-						<li><span>About us</span>
-							<ul>
-								<li><a class="content" href="#about/history">History</a></li>
-								<li><span>The team</span>
-									<ul>
-										<li><a class="content" href="/pages.html?id=1">Management</a></li>
-										<li><a class="content" href="pages.html?id=2">Sales</a></li>
-										<li><a class="content" href="pages.html?id=3">Development</a></li>
-									</ul>
-								</li>
-								<li><a class="content" href="#about/address">Our address</a></li>
-							</ul>
-						</li>
-						<li><a class="content"href="#contact">Contact</a></li>
-					</ul>
-				</nav>
-				<div id="submenu"></div>
+				<div class="text"><a href="#menu" class="menulines"><span></span></a><div id="section_title">FRCA Primary</div></div>
+				<!--//-->
+				<div id="mySidenav" class="sidenav">
+					<input type="search" name="searchbox" id="searchbox"/>
+					<div id="menu">
+				      <!--<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>-->
+				      	<ul> 
+							<li class="Selected"><a href="./">Home</a></li>
+							<!--onclick="javascript:toggleMenu(1)"-->
+							<div id="html_menu">
+								<!--*****WILL BE POPULATED DYNAMICALLY JS******-->
+							</div>
+							<li><a href="#">About</a></li>
+				      		<li><a href="#">Contact</a></li>
+						</ul>
+					</div>
+				</div>
 			</div>
-			<!--//end of header-->
-
-
-			<!--change content according to passed value-->
-			<div class="content main">
+			<div class="content main" id="content_main">
 				<h3>Title</h3><br />
 				<p id="content">
-				<div class="element"></div>
-					Try to extend the cotnent across the page so that when you click on it - it closes the menu... blah blah 
-					Try to extend the cotnent across the page so that when you click on it - it closes the menu... blah blah 
-					Try to extend the cotnent across the page so that when you click on it - it closes the menu... blah blah 
-					Try to extend the cotnent across the page so that when you click on it - it closes the menu... blah blah 
-				</p>
+				  <!--<span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span><h2 class="display_inline">Sidenav Push Example</h2>-->
+						<div class="element"></div>
+						Try to extend the cotnent across the page so that when you click on it - it closes the menu... blah blah 
+						Try to extend the cotnent across the page so that when you click on it - it closes the menu... blah blah 
+						Try to extend the cotnent across the page so that when you click on it - it closes the menu... blah blah 
+						Try to extend the cotnent across the page so that when you click on it - it closes the menu... blah blah 
+					</p>
 			</div>
 		</div>
-
-		<script src="./js/mmenu-light.js"></script>
-		<script src="./js/mmenu-page.js"></script>		
-	
-
+<!--NOT USED ANYMORE
+<script src="./js/mmenu-light.js"></script>
+<script src="./js/mmenu-page.js"></script>		
+-->
+<!--DOES NOT WORK FOR SUB_SUB NAVIGATION ?ARIA issue-->
+<script src="./js/cMenu-page.js"></script>		
+<!--changed the params when  menuItem_click(evt) is run -->
 <!--CLASS SETTINGS-->
 <script>
-	// creating a Page object
-	var urlParams = new URLSearchParams(window.location.search);
-	//class declaration for Menu
-	//remember if already loaded into IndexedDB then use that 
-	let primary_nav = new Menu(urlParams.get('id'));
-	primary_nav.menuJSON();
+	var url = window.location;
+	var urlParams = new URLSearchParams(url.search);
+	url_id = urlParams.get('id');
+	if ((url_id == "")||(url_id == null)){
+		url_id = "1";	
+	}
+	//and call function
+	getMenu(url_id);
+	
+	function getMenu(_url_id){
+		//instatiate menu class  
+		let menu = new Menu(url_id);  //ASYNC CLASS CALLING JSON menu		
+		
+		fetch("./assets/menu.json")
+			.then(response => response.json()) //NEW condensed.
+			.then(data => {
+				menu.filter_populateMenu(data, _url_id) //NEW VERSION ?	
+				console.log("test_menu.sectionid" + menu.sectionid);
+				console.log("test_menu.pageid" + menu.pageid);
+				getContent(menu.pageid, _url_id, menu.parentid, menu.sectionid);
+				//primary_nav.sectionid
+			})
+	}	
+	//called from getMenu as data needed from menu.json to populate page. 
+	function getContent(_pageid, _id, _parentid, _sectionid){
+		//instatiate page class  
+		let page = new Page(_pageid);  //ASYNC CLASS CALLING JSON menu		
+
+		fetch("./assets/pages/data" + _pageid + ".json")
+			  .then((response) => response.json())
+			  .then((data) => {
+					//page.pageContent(data, _pageid, _sectionid);
+					//page.pageContentEdit(data, _pageid, _id, _parentid, _sectionid);
+					page.pageContent(data, _pageid, _sectionid)
+				})
+			  //.catch((err) => {
+				//	console.log("custom err=" + err);
+			    // Do something for an error here
+			  //})
+	//I guess more of a push than a pull 
+	//so once this is done it pushes (callsback)
+	}
+	
+
+	/*This function is called from each Menu click*/
+	/** called from cMenu-page.js***/
+	function updatePage(_pageid, _id, _parentid, _sectionid){
+		let page1 = new Page(_pageid);
+		let result2 = url.toString().includes("pages-edit");
+		if (result2){
+			page1.pageContentEdit(_pageid, _id, _parentid,  _sectionid);								
+		}else{
+			page1.pageContent(_pageid, _sectionid);					
+		}		
+	}
+	
+	function expand_collapse(evt){
+		//var coll = document.getElementsByClassName("collapsible");
+		//var i;
+		//for (i = 0; i < coll.length; i++) {
+		//  coll[i].addEventListener("click", function() {
+			//var parElem = evt.target.parentElement;
+		    //alert(evt.target);
+			var event_Button = evt.target;
+			event_Button.classList.toggle("active");
+//event_Button.style.backgroundColor = "red"; //only updates on click
+		    var content = event_Button.nextElementSibling;
+		    if (content.style.maxHeight){
+		      content.style.maxHeight = null;
+		    } else {
+		      content.style.maxHeight = content.scrollHeight + "px";
+		    } 
+		  //});
+		//}
+		
+	}
+
+	//primary_nav.menuID(url_id);
+	//primary_nav.setColor();
 	//not filled as async .......
 	//console.log(primary_nav.menuArray);
 	//not filled as async .......
-
-
 	//class declaration for Page
 	//page1 is an instance of Page class
-	let page1 = new Page(urlParams.get('name'));
-	page1.setColor();
-
-</script>
 
 
-<!--my custom scripting--> 
-<script>
 
-
+function toggleMenu(p_pageid){
+	console.log (p_pageid);
+}
 //populate();
 //OLD VERSION OF FETCH AND RESPONSE - NOW JUST NEED response.json and .then which is async already
 async function populate() {

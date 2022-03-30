@@ -37,7 +37,7 @@
 {
   "id": 1010,
   "parentid": 1000,
-  "pageid": 1040,
+  "pageid": 1010,
   "pagename": "Lung Compliance"
 },
 {
@@ -135,5 +135,35 @@
   "parentid": 16,
   "pageid": 19,
   "pagename": "sub Pharmacology 6"
+},
+{
+  "id": 20,
+  "parentid": 0,
+  "pageid": 20,
+  "pagename": "Thames Valley Critical Care Course"
+},
+{
+  "id": 21,
+  "parentid": 20,
+  "pageid": 21,
+  "pagename": "Pre-course"
+},
+{
+  "id": 22,
+  "parentid": 21,
+  "pageid": 22,
+  "pagename": "Basic Monitoring"
+},
+{
+  "id": 23,
+  "parentid": 21,
+  "pageid": 23,
+  "pagename": "Overview of organ support"
+},
+{
+  "id": 24,
+  "parentid": 22,
+  "pageid": 24,
+  "pagename": "Central Venous Monitoring"
 }
 ]

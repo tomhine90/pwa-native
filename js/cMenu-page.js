@@ -29,7 +29,8 @@
 					//alert(cMenuItem.parentElement.id);					
 				return false;
 				*/
-				function menuItem_click(evt, _pageid, _sectionid){
+				/*FUNCTIONS*/
+				function menuItem_click(evt, _pageid, _parentid, _sectionid){
 					evt.preventDefault();
 					var parElem = evt.target.parentElement;
 					//parElem.style.backgroundColor = "red";
@@ -38,13 +39,19 @@
 					} else {
 						parElem.setAttribute('aria-expanded', "false");
 					}
+					let result2 = url.toString().includes("pages-edit");
+					if (result2){
+								history.pushState('data to be passed', 'Page Title', "pages-edit?id=" + parElem.id);
+					}else{
+								history.pushState('data to be passed', 'Page Title', "pages?id=" + parElem.id);
+					}		
 					//alert(parElem.id);
-					history.pushState('data to be passed', 'Page Title', "?id=" + parElem.id);
 					//getContent and update page. 
-					updatePage(_pageid, _sectionid);					
+					getContent(_pageid, parElem.id, _parentid, _sectionid)
+					//updatePage(_pageid, parElem.id, _parentid, _sectionid);					
 				}
-				/*FUNCTIONS*/
-				/*not used as not dynamically binding*/
+	
+					/*not used as not dynamically binding*/
 				function addEvent_to_Menu(cMenuItem) {
 					cMenuItem.addEventListener( 'click', evnt => {
 					//check to see if menuItem if menuItem check to see if has Children
@@ -58,7 +65,7 @@
 				function addEvent(cItem){
 		  			cItem.addEventListener( 'click', evnt => {
 						//check to see if menuItem if menuItem check to see if has Children
-						evnt.preventDefault();
+						//evnt.preventDefault();
 						closeNav();
 					});
 				}
