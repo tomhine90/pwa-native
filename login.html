@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="./css/style.css">
   <link rel="manifest" href="./manifest.json">
   
-  <script src="./js/page.js"></script>
+<!--  <script src="./js/page.js"></script>-->
 <script>
 window.addEventListener('load', ()=>{
     console.log("in window load");	
@@ -28,8 +28,92 @@ window.addEventListener('load', ()=>{
 	}
 });
 </script>
-	<title>Stack</title>
+
+<script>
+fetch('https://mdn.github.io/learning-area/javascript/oojs/json/superheroes.json')
+  .then(response => response.json())
+  .then(data => console.log(data));
+
+
+fetch("https://data.mongodb-api.com/app/data-dvhsb/endpoint/data/beta/action/insertOne", { 
+  headers: {
+    "Api-Key": "w9G1wfJxlt1fBSvHbh3FbrldksjqVeRWMtcw6HqAXVuuYVg4eH3CZa0xO2kFCmhG",
+    "Content-Type": "application/json"
+  },
+  data: '{"id": "1070", "name": "Testing page insert from fetch", "content" : "<p>updating page content from fetch</p>"}}',
+  method: "POST"
+})
+
+
+/*
+var url = 'https://www.googleapis.com/geolocation/v1/geolocate?key=YOUR_KEY';
+var data = {some: json};
+  fetch(url, {
+    body: JSON.stringify(data),
+    headers: {
+      'dataType': 'json',
+      'content-type': 'application/json'
+    },
+    method: 'POST',
+    redirect: 'follow'
+  })
+  .then(response => {
+    if (response.status === 200) {
+      console.log(response.text());
+  } else {
+   throw new Error('Something went wrong on api server!');
+  }
+})
+.catch(error => {
+  console.error(error);
+});
+
+//TRYING TO SEND A cURL request via fetch instead.
+fetch("https://httpbin.org/basic-auth/user/passwd", {
+  headers: new Headers({
+    "Authorization": `Basic ${base64.encode(`${login}:${password}`)}`
+  }),
+}).then(response => {
+  if (!response.ok) throw new Error(response.status);
+  return response.json();
+})
+
+*/
+</script>
+
+<title>Stack</title>
+
+<!--https://data.mongodb-api.com/app/data-dvhsb/endpoint/data/beta-->
+<!--API key
+w9G1wfJxlt1fBSvHbh3FbrldksjqVeRWMtcw6HqAXVuuYVg4eH3CZa0xO2kFCmhG
+-->
+<!--
+curl --location --request POST 'https://data.mongodb-api.com/app/data-dvhsb/endpoint/data/beta/action/findOne' \
+--header 'Content-Type: application/json' \
+--header 'Access-Control-Request-Headers: *' \
+--header 'api-key: w9G1wfJxlt1fBSvHbh3FbrldksjqVeRWMtcw6HqAXVuuYVg4eH3CZa0xO2kFCmhG' \
+--data-raw '{
+    "collection":"pages",
+    "database":"stack",
+    "dataSource":"Cluster-stack",
+    "projection": {"_id": 1}
+}'
+-->
+<!--
+curl --request POST 'https://data.mongodb-api.com/app/data-dvhsb/endpoint/data/beta/action/insertOne' \
+  --header 'Content-Type: application/json' \
+  --header 'Access-Control-Request-Headers: *' \
+  --header 'api-key: w9G1wfJxlt1fBSvHbh3FbrldksjqVeRWMtcw6HqAXVuuYVg4eH3CZa0xO2kFCmhG' \
+  --data-raw '{
+      "dataSource": "Cluster-stack",
+      "database": "stack",
+      "collection": "pages",
+      "document": {
+        "id": "1060", "name": "Testing page insert from cURL", "content" : "<p>updating page content from cURL</p>"
+      }
+  }'	
 	
+	-->
 	
 	
 </head>
