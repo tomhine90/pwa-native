@@ -37,7 +37,8 @@ fetch('https://mdn.github.io/learning-area/javascript/oojs/json/superheroes.json
 fetch("https://data.mongodb-api.com/app/data-dvhsb/endpoint/data/beta/action/insertOne", { 
   headers: {
     "Api-Key": "w9G1wfJxlt1fBSvHbh3FbrldksjqVeRWMtcw6HqAXVuuYVg4eH3CZa0xO2kFCmhG",
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+	"Access-Control-Allow-Methods":'GET, POST, PUT, DELETE, OPTIONS'
   },
   data: '{"id": "1070", "name": "Testing page insert from fetch", "content" : "<p>updating page content from fetch</p>"}}',
   method: "POST"
