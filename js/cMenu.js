@@ -44,15 +44,15 @@ class Menu {
 				this._bgcolor = "#1a2238"
 				//loadPrimary Navigation etc  json file
 		        break;
-		    case 8:  
+		    case 2:  
 		        // body of case 2
 				this._bgcolor = "#490b3d"
 		        break;
-		    case 14:
+		    case 3:
 		        // body of case N
 				this._bgcolor = "#ff6a3d"
 		        break;	
-		    case 20:
+		    case 4:
 		        // body of case N
 				this._bgcolor = "#60c2d3"
 		        break;	
@@ -92,7 +92,8 @@ class Menu {
 	}
 
 	//using filter to first filter out parent pages THEN print the rest of the menu
-	filter_populateMenu(pages){
+	////menu.filter_populateMenu(data, _menuid) call from pages-edit from result of 	
+	filter_populateMenu(pages, _menuid){
 		//add in eventlistener
 		//item.addEventListener("click", toggleItem, false);
 		var _html_menu = "";			
@@ -101,9 +102,11 @@ class Menu {
 		var _count = 0;
 		var html_count_string = ""
 		var titleTarget = "";
-		//********* */finds SECTION details****************
+		//this.id is set in the setters and getters above when Menu class is instantiated.
+		//-----------finds SECTION details -------------------------///
 		this.findParent(pages, this.id, 0); //setting the sectionid
-		//this.section_id - this is set but for some reason the this.sectionid is not being set and returned....
+		console.log("this.sectionid=" + this.sectionid);
+		console.log("this.sectionname=" + this.sectionname);
 		if (this.sectionname != null ){
 			titleTarget = document.getElementById('section_title');
 			titleTarget.innerHTML = this.sectionname;
