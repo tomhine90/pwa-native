@@ -85,11 +85,72 @@ class Page {
 	pageContentEdit(data, _pageid, _id, _parentid, _sectionid){
 		if (_pageid != null){
 			// Now call the function inside fetch promise resolver
-//				.then(this.CheckError())
-console.log("data[0].id=" + data[0].id);
-console.log("data[0].name=" + data[0].name);
-				this.pageid = data[0].id;
-				this.name = data[0].name;
+			//				.then(this.CheckError())
+			//console.log("data[0].id=" + data[0].id);
+			//console.log("data[0].name=" + data[0].name);
+			////variables passed in from the url 
+			var page_editable_id = document.getElementById('editable_id');
+			page_editable_id.value = _id;
+
+			var page_editable_parentid = document.getElementById('editable_parentid');
+			page_editable_parentid.value = _parentid;
+
+			var jsonQObjects;
+			var page_editable_pageid, page_editable_name;
+			
+			console.log("data[0]" + data[0]);
+			for (var key in data[0]) {
+			    var arr = data[0][key];
+				//console.log("key=" + key);
+				//console.log("arr=" + arr);
+				if (key == "id"){
+					this.pageid = arr;
+					page_editable_pageid = document.getElementById('editable_pageid');
+					page_editable_pageid.value = arr;
+				}else if (key == "name"){
+					this.name = arr;
+					page_editable_name = document.getElementById('editable_name');
+					page_editable_name.value = data[0].name;
+				}else if (key == "content"){
+					this.name = arr;
+					tinymce.get("editable_content").setContent(arr);
+				}else if (key == "questions"){
+					jsonQObjects = JSON.parse(arr)	
+					console.log(jsonQObjects);
+					console.log(jsonQObjects[0].question)
+					console.log(jsonQObjects[0].contents)
+					console.log ("jsonQObjects.length" + jsonQObjects.length);
+					for (var i = 0; i < jsonQObjects.length; i++){
+						addQuestion();
+						var question_string = "editable_question" +  i.toString();
+						var answer_string = "editable_answer" +  i.toString();
+						var page_question = document.getElementById(question_string);
+						page_question.value = jsonQObjects[0].question;
+						//add content to tinyMCE area
+						var answer_string_content = jsonQObjects[0].contents
+				tinymce.init({
+					selector: '.editor-content',
+					plugins: 'table code lists fullscreen',
+  					toolbar: 'undo redo | formatselect | bold italic | ' +
+    				'alignleft aligncenter alignright alignjustify | indent outdent | ' +
+					'table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol'    });
+					tinymce.activeEditor.setContent(jsonQObjects[0].contents);
+					//tinymce.get(answer_string).setContent(jsonQObjects[0].contents);
+					}	
+				}	
+			}
+
+		}
+		//tinymce.get("editable_answer0").setContent("<p>Hello world!</p>");
+console.log(answer_string_content);
+
+/*
+[{"question":"General concepts", "contents":"<p>Basic monitoring&nbsp;</p>
+<p>&nbsp;</p>"}]
+*/
+
+//console.log ("data[0].id" + data[0].id);
+//console.log ("data[0].name" + data[0].name);
 				//this.question1 = data[0].question1;
 				//
 /* 
@@ -105,26 +166,13 @@ console.log("data[0].name=" + data[0].name);
 			    //console.log("data[0]" + data[0]);
 			    //console.log("data[0].contents1" + data[0].contents1);
 
-				////
-				var page_editable_id = document.getElementById('editable_id');
-				page_editable_id.value = _id;
 
-				var page_editable_parentid = document.getElementById('editable_parentid');
-				page_editable_parentid.value = _parentid;
-				
-				var page_editable_pageid = document.getElementById('editable_pageid');
-				page_editable_pageid.value = data[0].id;
-
-				var page_editable_name = document.getElementById('editable_name');
-				page_editable_name.value = data[0].name;
-
-				tinymce.get("editable_content").setContent(data[0].content);
 				//console.log(data[0].content);
-
+/*
 				var question_text  = "editable_question1";
 				var answer_text = "editable_answer1";
 				var page_question = "";
-
+				//NEED TO UPDATE THIS IN ACCORDANCE WITH THE NEW STRUCTURE..
 				for (let i = 0; i < data[0].questions.length; i++) {
 					//console.log(data[0].questions[i].question);
 					//console.log(data[0].questions[i].contents);
@@ -139,7 +187,8 @@ console.log("data[0].name=" + data[0].name);
 					
 					tinymce.get(answer_text).setContent(data[0].questions[i].contents);
 					//  text += data[0].questions[i] + ", ";
-				}	
+				}
+*/	
 				/*
 				var page_question2= document.getElementById('editable_question2');
 				page_question2.value = data[0].question2;
@@ -159,8 +208,8 @@ console.log("data[0].name=" + data[0].name);
 				//	return response.json();
 				//})
 				.then(data => this.showPage(data, _pageid)).catch((error) => { console.log ("data" + _pageid + ".json")})  //NEW VERSION ?
-				*/
 		}
+				*/
 
 	}
 	
