@@ -21,6 +21,14 @@ class Page {
         this._name = x;
     }
 	// getter
+    get content() {
+        return this._content;
+    }
+    // setter
+    set content(x) {
+        this._content = x;
+    }
+	// getter
     get question1() {
         return this._question1;
     }
@@ -40,38 +48,36 @@ class Page {
 	  }
 	}
 	//page.pageContentEdit(pagedata, _pageid, _url_id, _parentid, _sectionid);
-	pageContent(data, _pageid, _sectionid){
+	pageContent(data, _pageid, _menuid, _parentid, _sectionid){
 		var _pagecontent = "";
+		var jsonQObjects;
+
 		if (_pageid != null){
-			// Now call the function inside fetch promise resolver
-//				.then(this.CheckError())
-			    // Work with JSON data here
-			    //console.log(data);
-				this.pageid = data.id;
-				this.name = data[0].name;
-				//this.question1 = data[0].question1;
-				//
-			_pagecontent = "<h3>" + this.name + "</h3>"
-			_pagecontent += "<p id=\"content\">";
-			_pagecontent += 	data[0].content
-			for (let i = 0; i < data[0].questions.length-1; i++) {
-				_pagecontent += 	"<div class=\"container\">";
-				_pagecontent += 		"<button type=\"button\" class=\"collapsible section" + _sectionid + "\" onclick=\"expand_collapse(event)\">" + data[0].questions[i].question + "</button>";
-				_pagecontent += 		"<div class=\"col_content\">";
-				_pagecontent += 			data[0].questions[i].contents
-				_pagecontent += 	"</div>"
-			//	console.log(data[0].questions[i].question);
-			//  text += data[0].questions[i] + ", ";
-			}
-			_pagecontent += "</div>";
-			_pagecontent += "</p>";
-				
-				//<button class="collapsible">Open Collapsible</button>
-				//console.log("_pagecontent" + _pagecontent);
-				//PRINT CONTENT
-				var pagecontent_Target = document.getElementById('content_main');
-				pagecontent_Target.innerHTML = _pagecontent;
-			
+			//console.log("_pageid != null");
+			//console.log("_pageid=" + _pageid);
+			//console.log("_menuid=" + _menuid);
+			//console.log("data[0]" + data[0]);
+			for (var key in data[0]) {
+			    var arr = data[0][key];
+				console.log("key=" + key);
+				console.log("arr=" + arr);
+				if (key == "id"){ //id as returned from Pages data would be page_id
+					this.pageid = arr;
+				}else if(key == "name"){
+					this.name = arr;
+				}else if(key == "content"){
+					this.content = arr;
+				}else if(key == "questions"){
+					jsonQObjects = JSON.parse(arr)
+					var _qpagecontent = "";						
+					for (var i = 0; i <= jsonQObjects.length -1; i++){
+						_qpagecontent += 	"<div class=\"container\">";
+						_qpagecontent += 		"<button type=\"button\" class=\"collapsible section" + _sectionid + "\" onclick=\"expand_collapse(event)\">" + jsonQObjects[i].question + "</button>";
+						_qpagecontent += 		"<div class=\"col_content\">";
+						_qpagecontent += 			jsonQObjects[i].contents
+						_qpagecontent += 	"</div>"					
+					}
+				}
 				/*fetch("./assets/pages/data" + _pageid + ".json")
 				.then(response => response.json()).catch((error) => { console.log ("data" + _pageid + ".json")}) //NEW condensed.
 				//.then (function (response){  //OLD VERSION OF response => response.json()
@@ -79,8 +85,18 @@ class Page {
 				//})
 				.then(data => this.showPage(data, _pageid)).catch((error) => { console.log ("data" + _pageid + ".json")})  //NEW VERSION ?
 				*/
+			}
+			_pagecontent += "<h3>" + this.name + "</h3>"
+			_pagecontent += "<p id=\"content\">" + this.content
+			_pagecontent += _qpagecontent;
+			_pagecontent += "</div>";
+			_pagecontent += "</p>";								
+			console.log("_pagecontent=" + _pagecontent);
+			var pagecontent_Target = document.getElementById('content_main');
+			pagecontent_Target.innerHTML = _pagecontent;			
 		}
 	}
+	
 	//page.pageContentEdit(pagedata, _pageid, _url_id, _parentid, _sectionid);
 	pageContentEdit(data, _pageid, _menuid, _parentid, _sectionid){
 		if (_pageid != null){
@@ -142,16 +158,14 @@ class Page {
 						answerElem.value = jsonQObjects[i].contents;
 						//add content to tinyMCE area
 						//var answer_string_content = jsonQObjects[i].contents
-						
-console.log("1st jsonQObjects[i].contents=" + jsonQObjects[i].contents);
-
-let tinmyMceInstance = tinymce.get(answer_string);
-if( tinmyMceInstance != null ){
-	//var ed = tinyMCE.EditorManager.get("#editable_answer0")
-	console.log (answer_string + " ALREADY INITIALISED");
-	tinmyMceInstance.remove();
-}
-
+						//***need to remove tinymce instances before re-instatiating. */						
+						console.log("1st jsonQObjects[i].contents=" + jsonQObjects[i].contents);
+						let tinmyMceInstance = tinymce.get(answer_string);
+						if( tinmyMceInstance != null ){
+							//var ed = tinyMCE.EditorManager.get("#editable_answer0")
+							console.log (answer_string + " ALREADY INITIALISED");
+							tinmyMceInstance.remove();
+						}
 						//console.log("answer_string" + answer_string);
 						//var answerstringTA = document.getElementById(answer_string);
 						tinymce.init({
@@ -273,6 +287,9 @@ ed.render();
 
 
 }
+///end of cPage class
+
+
 
 function myCustomInitInstance(inst) {
     alert("Editor: " + inst.editorId + " is now initialized.");

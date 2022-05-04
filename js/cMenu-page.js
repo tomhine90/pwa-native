@@ -8,18 +8,6 @@
 					let numb = html_div_obj.querySelectorAll(".menu_item").length;
 					alert(numb); //0 //BECAUSE MENU IS ASYNCHRONOUS - NOT LOADED YET...
 				}*/
-				const contentItems = document.querySelectorAll(".content");
-				contentItems.forEach(function(cItems) {
-					//alert(cItems);
-					addEvent(cItems);
-				});				
-				document.querySelector( 'a[href="#menu"]' )
-					.addEventListener( 'click', evnt => {
-						changeNavState();
-						evnt.preventDefault();
-						//drawer.open();
-						//document.querySelector( '.mm-ocd--open' ).style.max-width = "20em";
-				});
 				/*
 				<!-- .sidenav #menu #htm_menu ul -->
 				//var appsMenuItems = document.querySelectorAll('#appmenu > li');
@@ -29,27 +17,6 @@
 					//alert(cMenuItem.parentElement.id);					
 				return false;
 				*/
-				/*FUNCTIONS*/
-				function menuItem_click(evt, _pageid, _parentid, _sectionid){
-					evt.preventDefault();
-					var parElem = evt.target.parentElement;
-					//parElem.style.backgroundColor = "red";
-					if (parElem.getAttribute('aria-expanded') == 'false' || parElem.getAttribute('aria-expanded') ==  null) {
-						parElem.setAttribute('aria-expanded', "true");
-					} else {
-						parElem.setAttribute('aria-expanded', "false");
-					}
-					let result2 = url.toString().includes("pages-edit");
-					if (result2){
-								history.pushState('data to be passed', 'Page Title', "pages-edit?id=" + parElem.id);
-					}else{
-								history.pushState('data to be passed', 'Page Title', "pages?id=" + parElem.id);
-					}		
-					//alert(parElem.id);
-					//getContent and update page. 
-					getContent(_pageid, parElem.id, _parentid, _sectionid)
-					//updatePage(_pageid, parElem.id, _parentid, _sectionid);					
-				}
 	
 					/*not used as not dynamically binding*/
 				function addEvent_to_Menu(cMenuItem) {
@@ -62,31 +29,7 @@
 					});
 				}
 				
-				function addEvent(cItem){
-		  			cItem.addEventListener( 'click', evnt => {
-						//check to see if menuItem if menuItem check to see if has Children
-						//evnt.preventDefault();
-						closeNav();
-					});
-				}
-				function changeNavState() {
-					var sideNav = document.getElementById("mySidenav");
-					if (sideNav.getAttribute("class") == "sidenav"){
-						sideNav.style.width = "200px";	
-						sideNav.setAttribute("class", "sidenav open");
-					} else{
-						sideNav.style.width = "0px";
-						sideNav.setAttribute('class', "sidenav");
-					}
-				  	//document.getElementById("main").style.marginLeft = "250px";
-				}
 				
-				function closeNav() {
-					var sideNav = document.getElementById("mySidenav");
-				  	sideNav.style.width = "0";
-					sideNav.setAttribute('class', "sidenav");
-				  //document.getElementById("main").style.marginLeft= "0";
-				}
 /*
 			var menu = new MmenuLight(
 				document.querySelector( '#menu' ),
