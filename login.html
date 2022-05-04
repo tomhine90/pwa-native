@@ -8,9 +8,19 @@
 
 <link rel="shortcut icon" type="image/jpg" href="./favicon.ico"/>
 
-  <link href="https://fonts.googleapis.com/css?family=Lexend+Exa&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./css/style.css">
-  <link rel="manifest" href="./manifest.json">
+		<link type="text/css" rel="stylesheet" href="./css/style.css" />
+		<link type="text/css" rel="stylesheet" href="./css/pages.css" />
+		<link type="text/css" rel="stylesheet" href="./css/menu.css" />
+		
+		<link rel="manifest" href="./manifest.json">
+		<!--class declaration--> 
+  		<script src="./js/cPage.js" ></script>
+  		<script src="./js/cMenu.js" ></script>
+		<!--include module for editor--> 
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+		<script type="text/javascript" src="./simpleIDB/SimpleIDB.js"></script>
+		<script src="https://cdn.tiny.cloud/1/4rrbtndutqxpbakupzlul90fcyl9yj8mk9bp9aveo9jd55jo/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+		<!--<script src="./js/f.js" type="module"></script>-->
   
 <script>
 window.addEventListener('load', ()=>{
@@ -29,12 +39,16 @@ window.addEventListener('load', ()=>{
 </script>
 
 <script>
-fetch('https://mdn.github.io/learning-area/javascript/oojs/json/superheroes.json')
-  .then(response => response.json())
-  .then(data => console.log(data));
+
+//html => {
+  // console.log(html);
+  //document.getElementById('data').innerHTML = html;
+
+//page_content
+  //.then(data => console.log(JSON.stringify(data)));
 
 
-fetch("https://justcors.com/tl_2afb752/https://data.mongodb-api.com/app/data-dvhsb/endpoint/data/beta/action/insertOne", { 
+/*fetch("https://data.mongodb-api.com/app/data-dvhsb/endpoint/data/beta/action/insertOne", { 
   headers: {
     "Api-Key": "w9G1wfJxlt1fBSvHbh3FbrldksjqVeRWMtcw6HqAXVuuYVg4eH3CZa0xO2kFCmhG",
     "Content-Type": "application/json",
@@ -45,46 +59,16 @@ fetch("https://justcors.com/tl_2afb752/https://data.mongodb-api.com/app/data-dvh
   data: '{"id": "1070", "name": "Testing page insert from fetch", "content" : "<p>updating page content from fetch</p>"}}',
   method: "POST"
 })
-
-//res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-/*
-var url = 'https://www.googleapis.com/geolocation/v1/geolocate?key=YOUR_KEY';
-var data = {some: json};
-  fetch(url, {
-    body: JSON.stringify(data),
-    headers: {
-      'dataType': 'json',
-      'content-type': 'application/json'
-    },
-    method: 'POST',
-    redirect: 'follow'
-  })
-  .then(response => {
-    if (response.status === 200) {
-      console.log(response.text());
-  } else {
-   throw new Error('Something went wrong on api server!');
-  }
-})
-.catch(error => {
-  console.error(error);
-});
-
-//TRYING TO SEND A cURL request via fetch instead.
-fetch("https://httpbin.org/basic-auth/user/passwd", {
-  headers: new Headers({
-    "Authorization": `Basic ${base64.encode(`${login}:${password}`)}`
-  }),
-}).then(response => {
-  if (!response.ok) throw new Error(response.status);
-  return response.json();
-})
-
 */
 </script>
 
 <title>Stack</title>
 
+<div id="content"></div>
+<!--
+Interesting website
+https://observablehq.com/@mbostock/fetch-with-basic-auth#login	
+-->
 <!--https://data.mongodb-api.com/app/data-dvhsb/endpoint/data/beta-->
 <!--API key
 w9G1wfJxlt1fBSvHbh3FbrldksjqVeRWMtcw6HqAXVuuYVg4eH3CZa0xO2kFCmhG
@@ -114,8 +98,101 @@ curl --request POST 'https://data.mongodb-api.com/app/data-dvhsb/endpoint/data/b
         "id": "1060", "name": "Testing page insert from cURL", "content" : "<p>updating page content from cURL</p>"
       }
   }'	
+-->
+<!--
+		<form action="https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages" method="post">
+      	<ul>
+        	<li>
+          	<label for="name">First Name:</label>
+          	<input type="text" id="name" name="name" required>
+        	</li>
+			<li class="button">
+          		<button type="submit">Submit Sign-Up Form</button>
+        	</li>
+		</form>
+<button>Click Me!</button>
+-->
+<p>FOR POSTING</p>
+		<form id="myForm">
+			ID <input type="text"  id="editable_id" class="small">
+			ParentID <input type="text"  id="editable_parentid" class="small">
+			PageID <input type="text"  id="editable_pageid" class="small">
+			Page Name: <input type="text"  id="editable_name" class="med"><br/>
+			<strong>Content:</strong>
+			<textarea id="editable_content" name="editable_content" class="editor-content wide">
+			</textarea>
+    		<input id="postSubmit" type="submit" value="Create Page">
+		</form>
+
+<script>
+
+const page_content = document.getElementById('content');
+/*fetch('https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?name=1')
+  .then(response => response.json())
+  .then(data => {
+			page_content.innerHTML = JSON.stringify(data); 
+			console.log (data);
+		})
+*/
+//BOTH OF THESE WORK 
+//CALLING CALC
+/*
+{
+  "id": 9922,
+  "parentid": 0,
+  "pageid": 9922,
+  "pagename": "new test", 
+  "content" : "content for the pages collection/table"
+}
+*/
+//const jsonData = JSON.stringify({"a": 1,"b": 2,"op": "+", "content": "testing data from login page"})
+
+//https://bbx8g5lf6a.execute-api.eu-west-1.amazonaws.com/default/addpage
+//https://u6tgda2976.execute-api.eu-west-1.amazonaws.com/default/calc
+/*fetch('https://bbx8g5lf6a.execute-api.eu-west-1.amazonaws.com/default/addpage', {method: 'POST', body: jsonData})
+  .then(response => response.json())
+  .then(data => {
+			page_content.innerHTML = JSON.stringify(data); 
+			console.log (data);
+		})
+*/
+const thisForm = document.getElementById("myForm");
+thisForm.addEventListener('submit', async function (e) {
+
+var jsonData = JSON.stringify({ 
+		"id": document.getElementById("editable_id").value, 
+		"parentid": document.getElementById("editable_parentid").value, 
+		"pageid": document.getElementById("editable_pageid").value, 
+		"pagename": document.getElementById("editable_name").value, 
+		"content": document.getElementById("editable_content").value
+		})
+console.log ("jsonData" + jsonData);
+
+    e.preventDefault();
+    let response = await 
+	fetch('https://bbx8g5lf6a.execute-api.eu-west-1.amazonaws.com/default/addpage', {
+        method: 'POST',
+        body: jsonData
+    });
+    let result = await response.json();
+    alert(result)
+    console.log(result)
+});
+
+
+function createJSONstring(){
+	jsonData   = 	"{" 
+	jsonData  +=  	JSON.stringify("id") + ":" + JSON.stringify(document.getElementById("editable_id").value) + ","
+	jsonData  +=  	JSON.stringify("parentid") + ":" + JSON.stringify(document.getElementById("editable_parentid").value) + ","
+	jsonData  +=  	JSON.stringify("pageid") + ":" + JSON.stringify(document.getElementById("editable_pageid").value) + ","
+	jsonData  +=  	JSON.stringify("pagename") + ":" + JSON.stringify(document.getElementById("editable_name").value) + ","
+	jsonData  +=  	JSON.stringify("content") + ":" + JSON.stringify(document.getElementById("editable_name").value) + ","
+	jsonData += "}"
+	return jsonData;
 	
-	-->
-	
-	
+}
+</script>
+
+
+
 </head>

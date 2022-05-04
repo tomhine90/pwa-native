@@ -14,7 +14,8 @@
 		<!--class declaration--> 
   		<script src="./js/cPage.js" ></script>
   		<script src="./js/cMenu.js" ></script>
-
+		<!--DOES NOT WORK FOR SUB_SUB NAVIGATION ?ARIA issue-->
+		<script src="./js/functions_shared.js"></script>		
 		<!--include module for editor--> 
 	</head>
 	<body>
@@ -40,155 +41,51 @@
 				</div>
 			</div>
 			<div class="content main" id="content_main">
-				<h3>Title</h3><br />
+				<h3>Title</h3><br /><div id="loading_text">loading ....</div><div class="lds-hourglass" id="loader"></div>
 				<p id="content">
-				  <!--<span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span><h2 class="display_inline">Sidenav Push Example</h2>-->
-						<div class="element"></div>
-						Try to extend the cotnent across the page so that when you click on it - it closes the menu... blah blah 
-						Try to extend the cotnent across the page so that when you click on it - it closes the menu... blah blah 
-						Try to extend the cotnent across the page so that when you click on it - it closes the menu... blah blah 
-						Try to extend the cotnent across the page so that when you click on it - it closes the menu... blah blah 
-					</p>
+				  	<!--<span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span><h2 class="display_inline">Sidenav Push Example</h2>-->
+					<div class="element"></div>
+					<div id="questions"></div>
+				</p>
 			</div>
 		</div>
-<!--NOT USED ANYMORE
-<script src="./js/mmenu-light.js"></script>
-<script src="./js/mmenu-page.js"></script>		
--->
-<!--DOES NOT WORK FOR SUB_SUB NAVIGATION ?ARIA issue-->
-<script src="./js/cMenu-page.js"></script>		
-<!--changed the params when  menuItem_click(evt) is run -->
-<!--CLASS SETTINGS-->
+
 <script>
-	var url = window.location;
-	var urlParams = new URLSearchParams(url.search);
-	url_id = urlParams.get('id');
-	if ((url_id == "")||(url_id == null)){
-		url_id = "1";	
-	}
-	//and call function
-	getMenu(url_id);
-	
-	function getMenu(_url_id){
-		//instatiate menu class  
-		let menu = new Menu(url_id);  //ASYNC CLASS CALLING JSON menu		
-		
-		fetch("./assets/menu.json")
-			.then(response => response.json()) //NEW condensed.
-			.then(data => {
-				menu.filter_populateMenu(data, _url_id) //NEW VERSION ?	
-				console.log("test_menu.sectionid" + menu.sectionid);
-				console.log("test_menu.pageid" + menu.pageid);
-				getContent(menu.pageid, _url_id, menu.parentid, menu.sectionid);
-				//primary_nav.sectionid
-			})
-	}	
-	//called from getMenu as data needed from menu.json to populate page. 
-	function getContent(_pageid, _id, _parentid, _sectionid){
-		//instatiate page class  
-		let page = new Page(_pageid);  //ASYNC CLASS CALLING JSON menu		
-
-		fetch("./assets/pages/data" + _pageid + ".json")
-			  .then((response) => response.json())
-			  .then((data) => {
-					//page.pageContent(data, _pageid, _sectionid);
-					//page.pageContentEdit(data, _pageid, _id, _parentid, _sectionid);
-					page.pageContent(data, _pageid, _sectionid)
-				})
-			  //.catch((err) => {
-				//	console.log("custom err=" + err);
-			    // Do something for an error here
-			  //})
-	//I guess more of a push than a pull 
-	//so once this is done it pushes (callsback)
-	}
-	
-
-	/*This function is called from each Menu click*/
-	/** called from cMenu-page.js***/
-	function updatePage(_pageid, _id, _parentid, _sectionid){
-		let page1 = new Page(_pageid);
-		let result2 = url.toString().includes("pages-edit");
-		if (result2){
-			page1.pageContentEdit(_pageid, _id, _parentid,  _sectionid);								
-		}else{
-			page1.pageContent(_pageid, _sectionid);					
-		}		
-	}
-	
-	function expand_collapse(evt){
-		//var coll = document.getElementsByClassName("collapsible");
-		//var i;
-		//for (i = 0; i < coll.length; i++) {
-		//  coll[i].addEventListener("click", function() {
-			//var parElem = evt.target.parentElement;
-		    //alert(evt.target);
-			var event_Button = evt.target;
-			event_Button.classList.toggle("active");
-//event_Button.style.backgroundColor = "red"; //only updates on click
-		    var content = event_Button.nextElementSibling;
-		    if (content.style.maxHeight){
-		      content.style.maxHeight = null;
-		    } else {
-		      content.style.maxHeight = content.scrollHeight + "px";
-		    } 
-		  //});
-		//}
-		
-	}
-
-	//primary_nav.menuID(url_id);
-	//primary_nav.setColor();
-	//not filled as async .......
-	//console.log(primary_nav.menuArray);
-	//not filled as async .......
-	//class declaration for Page
-	//page1 is an instance of Page class
-
-
-
-function toggleMenu(p_pageid){
-	console.log (p_pageid);
-}
-//populate();
-//OLD VERSION OF FETCH AND RESPONSE - NOW JUST NEED response.json and .then which is async already
-async function populate() {
-  const requestURL = './assets/testdata.json';
-  const request = new Request(requestURL);
-  const response = await fetch(request);
-  const menuData = await response.json();
-  //populateMenu(menuData);
-
-  const requestPageURL = './assets/testpagedata.json';
-  const requestPage = new Request(requestPageURL);
-  const responsePage = await fetch(requestPage);
-  const pageData = await responsePage.json();
-  populatePage(pageData);
-}
-
-//I do not need to do this with the menu as I can populate it from the indexedDB
-//so I just need to call cidb.fill?
-function populateMenu(obj) {
-	
-  	const submenu = document.getElementById('submenu');
-	//console.log(obj['pageName']); // eg Physiology - root 
- 	menuString = "";
-        Object.entries(obj).forEach(([key, value]) => {
-			menuString += key + " " ;			 
-            console.log(key);
-			menuString += value + "<br/>";
-            console.log(value);
-        });
-        console.log('-------------------');
-  submenu.textContent = menuString;
-  //console.log(menuString);
-}
-function populatePage(obj){
-	const myPara = document.getElementById("content");
-	myPara.textContent = `Hometown: ${obj['homeTown']} // Formed: ${obj['formed']}`;
-  	//header.appendChild(myPara);
-
-}
+	//*****global variables set in functions_shared.js
+	window.onload = function() {
+		try {
+			getMenu(url_id);	//function in cMenu.js		
+		}catch{
+			getMenu(1)
+		}
+		if (gEditView){
+			tinymce.init({
+				selector: '.editor-content',
+					plugins: 'table code lists fullscreen link image',
+				  	toolbar: 'undo redo | formatselect | bold italic | numlist bullist | link | image' +
+				'alignleft aligncenter alignright alignjustify | indent outdent | ' +
+				'table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol'
+			});
+		}
+		//hide loading gif...
+		//document.getElementById("loader").style.display = "none";	
+		document.getElementById("loading_text").style.display = "none";	
+		document.getElementById("loader").style.display = "none";	
+	};
+	/*******event listeners*****/
+	const contentItems = document.querySelectorAll(".content");
+	contentItems.forEach(function(cItems) {
+		//alert(cItems);
+		addEvent(cItems);
+	});				
+	document.querySelector( 'a[href="#menu"]' )
+		.addEventListener( 'click', evnt => {
+			changeNavState();
+			evnt.preventDefault();
+			//drawer.open();
+			//document.querySelector( '.mm-ocd--open' ).style.max-width = "20em";
+	});
+	/*******event listeners*****/
 
 </script>
 
