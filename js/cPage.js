@@ -82,28 +82,34 @@ class Page {
 		}
 	}
 	//page.pageContentEdit(pagedata, _pageid, _url_id, _parentid, _sectionid);
-	pageContentEdit(data, _pageid, _id, _parentid, _sectionid){
+	pageContentEdit(data, _pageid, _menuid, _parentid, _sectionid){
 		if (_pageid != null){
+			console.log("_pageid != null");
+			console.log("_pageid=" + _pageid);
+			console.log("_menuid=" + _menuid);
+			console.log("data[0]" + data[0]);
 			// Now call the function inside fetch promise resolver
 			//				.then(this.CheckError())
 			//console.log("data[0].id=" + data[0].id);
 			//console.log("data[0].name=" + data[0].name);
 			////variables passed in from the url 
 			var page_editable_id = document.getElementById('editable_id');
-			page_editable_id.value = _id;
+			page_editable_id.value = _menuid;
 
 			var page_editable_parentid = document.getElementById('editable_parentid');
 			page_editable_parentid.value = _parentid;
 
+			var page_editable_sectionid = document.getElementById('editable_sectionid');
+			page_editable_sectionid.value = _sectionid;
+
 			var jsonQObjects;
 			var page_editable_pageid, page_editable_name;
 			
-			console.log("data[0]" + data[0]);
 			for (var key in data[0]) {
 			    var arr = data[0][key];
 				//console.log("key=" + key);
 				//console.log("arr=" + arr);
-				if (key == "id"){
+				if (key == "id"){ //id as returned from Pages data would be page_id
 					this.pageid = arr;
 					page_editable_pageid = document.getElementById('editable_pageid');
 					page_editable_pageid.value = arr;
@@ -116,35 +122,81 @@ class Page {
 					tinymce.get("editable_content").setContent(arr);
 				}else if (key == "questions"){
 					jsonQObjects = JSON.parse(arr)	
-					console.log(jsonQObjects);
-					console.log(jsonQObjects[0].question)
-					console.log(jsonQObjects[0].contents)
-					console.log ("jsonQObjects.length" + jsonQObjects.length);
-					for (var i = 0; i < jsonQObjects.length; i++){
-						addQuestion();
+					//clear first as also used for Add Sub Page
+					var page_questions = document.getElementById('questions');
+					page_questions.innerHTML = "";
+					//console.log(jsonQObjects);
+					//console.log(jsonQObjects[0].question)
+					//console.log ("jsonQObjects.length" + jsonQObjects.length);
+					//tinyMCE.get("#editable_answer0").remove();
+					//tinymce.EditorManager.get($(elem).attr("id"))!=null
+					for (var i = 0; i <= jsonQObjects.length -1; i++){
+						//addQuestion(_bwithContent) ==> boolean with content
+						addQuestion(true);
 						var question_string = "editable_question" +  i.toString();
+						var questionElem = document.getElementById(question_string);
+						questionElem.value = jsonQObjects[i].question;
+
 						var answer_string = "editable_answer" +  i.toString();
-						var page_question = document.getElementById(question_string);
-						page_question.value = jsonQObjects[0].question;
+						var answerElem = document.getElementById(answer_string);
+						answerElem.value = jsonQObjects[i].contents;
 						//add content to tinyMCE area
-						var answer_string_content = jsonQObjects[0].contents
-				tinymce.init({
-					selector: '.editor-content',
-					plugins: 'table code lists fullscreen',
-  					toolbar: 'undo redo | formatselect | bold italic | ' +
-    				'alignleft aligncenter alignright alignjustify | indent outdent | ' +
-					'table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol'    });
-					tinymce.activeEditor.setContent(jsonQObjects[0].contents);
-					//tinymce.get(answer_string).setContent(jsonQObjects[0].contents);
+						//var answer_string_content = jsonQObjects[i].contents
+						
+console.log("1st jsonQObjects[i].contents=" + jsonQObjects[i].contents);
+
+let tinmyMceInstance = tinymce.get(answer_string);
+if( tinmyMceInstance != null ){
+	//var ed = tinyMCE.EditorManager.get("#editable_answer0")
+	console.log (answer_string + " ALREADY INITIALISED");
+	tinmyMceInstance.remove();
+}
+
+						//console.log("answer_string" + answer_string);
+						//var answerstringTA = document.getElementById(answer_string);
+						tinymce.init({
+							selector: "#" + answer_string,
+							plugins: 'table code lists fullscreen',
+							init_instance_callback : function(editor) {
+    							console.log('Editor: ' + editor.id + ' is now initialized.');
+								//editor.setContent(answer_string_content);
+	  						},
+	  						toolbar: 'undo redo | formatselect | bold italic | ' +
+	    					'alignleft aligncenter alignright alignjustify | indent outdent | ' +
+							'table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol'    });						
+						//tinyMCE.activeEditor.render();
 					}	
+
 				}	
 			}
 
 		}
-		//tinymce.get("editable_answer0").setContent("<p>Hello world!</p>");
-console.log(answer_string_content);
-
 /*
+
+							setup: function (editor, answer_string_content) {
+	    						editor.on('init', function (e) {
+	      							//this gets executed AFTER TinyMCE is fully initialized
+									console.log("answer_string_content" + answer_string_content);
+	      							//editor.setContent(answer_string_content); //does not keep the editor object so just updates the last editor with same
+	    						})
+							},							
+
+//let response = await 
+var ed = new tinymce.Editor("editable_answer" + i.toString(), {
+	setup: function (editor) { 
+		editor.on ('init', function (e){ editor.setContent(answer_string_content)} )
+	}, 
+	toolbar: 'undo redo | formatselect | bold italic | ' +
+	   'alignleft aligncenter alignright alignjustify | indent outdent | ' +
+		'table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol'
+	},
+	tinymce.EditorManager);
+ed.render();
+
+						tinymce.EditorManager.init({
+						   some_settings : 'some value'
+						});
+
 [{"question":"General concepts", "contents":"<p>Basic monitoring&nbsp;</p>
 <p>&nbsp;</p>"}]
 */
@@ -222,6 +274,23 @@ console.log(answer_string_content);
 
 }
 
+function myCustomInitInstance(inst) {
+    alert("Editor: " + inst.editorId + " is now initialized.");
+}
+
+	function customTinyMceInit(inst) {
+		inst.activeEditor.setContent("testing content update");
+						var editor = tinymce.get(answer_string); 
+						editor.setContent("<p>hello</p>");
+						console.log ("tinymce.activeEditor.id=" + tinymce.activeEditor.id)
+						tinymce.activeEditor.setContent("<p>hello</p>");
+						//tinymce.activeEditor.execCommand('mceInsertContent', false, '<p>hi guys</p>');
+						//console.log(answerstringTA.id);
+						//tinymce.get(answer_string).setContent("<p>hello</p>");
+						var myContent = tinymce.activeEditor.getContent();
+						console.log("myContent" + myContent);
+
+	}
 
 
 function getParameterByName(name, url = window.location.href) {
