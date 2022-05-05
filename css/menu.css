@@ -35,10 +35,15 @@ z-index:9999;
   display: block;
   transition: 0.2s;
 text-align:left;
+overflow: hidden;
+white-space: nowrap; /* Don't forget this one */
+text-overflow: ellipsis;
+
 }
 div.right-align{
     float: right;
-    margin-right: 1em;
+    margin-right: 10%;
+    transform: translateX(20%);
 }
 .sidenav a:hover {
   color: grey;
@@ -55,16 +60,25 @@ div.right-align{
 	background: white;
 	width:100%;
 	height:100%;
+overflow: hidden;
+white-space: nowrap; /* Don't forget this one */
+text-overflow: ellipsis;
 }
 #menu ul{
-	width:100%;
+	width:97%;
 	list-style:none;
 	padding-left:1px;
+overflow: hidden;
+white-space: nowrap; /* Don't forget this one */
+text-overflow: ellipsis;
 }
 #menu ul li{
 	padding-left:10px;
 	border-top:solid #f3f3f3 2px;
-	width:95%;
+	width: 97%;
+overflow: hidden;
+white-space: nowrap; /* Don't forget this one */
+text-overflow: ellipsis;
 }
 #menu li.hide{
 	display:none;

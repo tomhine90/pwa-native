@@ -20,11 +20,24 @@ h1{
 	font-size: 1.2em;
 }
 h2, h3, h4, h5, h6 {
-	font-size: 1em;
-	margin: 15px 0 10px 0;	
+	font-size: 1.3em;
+    margin: 15px 0 10px 0;
 }
+.textsection1 h2, .textsection1 h3, .textsection1 h4{
+	color: #1a2238;	
+}
+.textsection2 h2, .textsection2 h3, .textsection2 h4{
+	color: #490b3d;	
+}
+.textsection3 h2, .textsection3 h3, .textsection3 h4{
+	color: #ff6a3d;	
+}
+.textsection4 h2, .textsection4 h3, .textsection4 h4{
+	color: #60c2d3;	
+}
+
 p {
-	margin: 0 0 10px 0;
+	margin: 1.5em 0 2em 0;
 }
 a, a:link, a:active, a:visited, a:hover {
 	color: inherit;
