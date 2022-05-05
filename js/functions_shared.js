@@ -65,7 +65,7 @@ function addEvent(cItem){
 function changeNavState() {
 	var sideNav = document.getElementById("mySidenav");
 	if (sideNav.getAttribute("class") == "sidenav"){
-		sideNav.style.width = "200px";	
+		sideNav.style.width = "210px";	
 		sideNav.setAttribute("class", "sidenav open");
 	}else{
 		sideNav.style.width = "0px";

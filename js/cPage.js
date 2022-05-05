@@ -50,7 +50,7 @@ class Page {
 	//page.pageContentEdit(pagedata, _pageid, _url_id, _parentid, _sectionid);
 	pageContent(data, _pageid, _menuid, _parentid, _sectionid){
 		var _pagecontent = "";
-		var jsonQObjects;
+		var jsonQObjects, page_content;
 
 		if (_pageid != null){
 			//console.log("_pageid != null");
@@ -75,7 +75,8 @@ class Page {
 						_qpagecontent += 		"<button type=\"button\" class=\"collapsible section" + _sectionid + "\" onclick=\"expand_collapse(event)\">" + jsonQObjects[i].question + "</button>";
 						_qpagecontent += 		"<div class=\"col_content\">";
 						_qpagecontent += 			jsonQObjects[i].contents
-						_qpagecontent += 	"</div>"					
+						_qpagecontent += 		"</div>"					
+						_qpagecontent += "</div>";
 					}
 				}
 				/*fetch("./assets/pages/data" + _pageid + ".json")
@@ -86,13 +87,13 @@ class Page {
 				.then(data => this.showPage(data, _pageid)).catch((error) => { console.log ("data" + _pageid + ".json")})  //NEW VERSION ?
 				*/
 			}
-			_pagecontent += "<h3>" + this.name + "</h3>"
+			//_pagecontent += "<h3>" + this.name + "</h3>"
 			_pagecontent += "<p id=\"content\">" + this.content
 			_pagecontent += _qpagecontent;
-			_pagecontent += "</div>";
 			_pagecontent += "</p>";								
 			console.log("_pagecontent=" + _pagecontent);
 			var pagecontent_Target = document.getElementById('content_main');
+			pagecontent_Target.classList.add("textsection" + _sectionid);
 			pagecontent_Target.innerHTML = _pagecontent;			
 		}
 	}
@@ -119,7 +120,7 @@ class Page {
 			page_editable_sectionid.value = _sectionid;
 
 			var jsonQObjects;
-			var page_editable_pageid, page_editable_name;
+			var page_editable_pageid, page_editable_name, page_editable_content;
 			
 			for (var key in data[0]) {
 			    var arr = data[0][key];
@@ -134,7 +135,9 @@ class Page {
 					page_editable_name = document.getElementById('editable_name');
 					page_editable_name.value = data[0].name;
 				}else if (key == "content"){
-					this.name = arr;
+					this.content = arr;
+					page_editable_content = document.getElementById('editable_content');
+					page_editable_content.value = arr;
 					tinymce.get("editable_content").setContent(arr);
 				}else if (key == "questions"){
 					jsonQObjects = JSON.parse(arr)	
@@ -170,14 +173,15 @@ class Page {
 						//var answerstringTA = document.getElementById(answer_string);
 						tinymce.init({
 							selector: "#" + answer_string,
-							plugins: 'table code lists fullscreen',
+							plugins: 'table code lists fullscreen link image',
 							init_instance_callback : function(editor) {
     							console.log('Editor: ' + editor.id + ' is now initialized.');
 								//editor.setContent(answer_string_content);
 	  						},
-	  						toolbar: 'undo redo | formatselect | bold italic | ' +
-	    					'alignleft aligncenter alignright alignjustify | indent outdent | ' +
-							'table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol'    });						
+						  	toolbar: 'undo redo | formatselect | bold italic | numlist bullist | link | image' +
+							'alignleft aligncenter alignright alignjustify | indent outdent | ' +
+							'table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol'
+							});						
 						//tinyMCE.activeEditor.render();
 					}	
 
