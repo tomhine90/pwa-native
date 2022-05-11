@@ -11,7 +11,9 @@ if ((url_id == "")||(url_id == null)){
 	url_id = "1";	
 }
 /*******global variables*****/
-
+function opentoID(){
+	
+}
 
 /*******end of event listeners*****/
 /*FUNCTIONS*/

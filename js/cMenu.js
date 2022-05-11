@@ -4,7 +4,8 @@
 class Menu {
   	constructor(id, sectionid) {
     	this._id = id;
-		this._sectionid = sectionid; 
+		this._sectionid = sectionid;
+		this._pageArray = new Array(); 
   	}
 	set id(x){
 		this._id = x;
@@ -69,7 +70,7 @@ class Menu {
 	
 	//METHODS
 	//iterate up pages tree to find the parent node
-	findParent(pages, _id, _count){
+	findParent(pages, _id, _count, _arr){
 		let page = pages.find(el => el.id === parseInt(_id));
 		if (_count == 0) {
 			this.pageid = page["pageid"];
@@ -87,8 +88,10 @@ class Menu {
 			//return page["id"];
 		}else {
 			_count = _count + 1;
-			this.findParent(pages, page["parentid"], _count)
+			this.findParent(pages, page["parentid"], _count, _arr)
 		}
+		_arr.push(_id);
+		return _arr;
 	}
 
 	//using filter to first filter out parent pages THEN print the rest of the menu
@@ -102,12 +105,16 @@ class Menu {
 		var _count = 0;
 		var html_count_string = ""
 		var titleTarget = "", editViewUrl = "";
+		
 		//this.id is set in the setters and getters above when Menu class is instantiated.
 		//-----------finds SECTION details -------------------------///
-		this.findParent(pages, this.id, 0); //setting the sectionid
-		console.log("this.sectionid=" + this.sectionid);
-		console.log("this.sectionname=" + this.sectionname);
-		//<li class="Selected"><a href="./">Home</a></li>
+		//iterates up the tree to find the sectionID - can use to get an Array - starting with the sectionID and each [] node down.
+		var arr = [];
+		this.findParent(pages, this.id, 0, arr); //setting the sectionid
+console.log("arr=" + arr); //array returns [4,8,10,11]  in order from top to bottom...
+
+		//console.log("this.sectionid=" + this.sectionid);
+		//console.log("this.sectionname=" + this.sectionname);
 		if (gEditView) editViewUrl = "-edit";
 		if (this.sectionname != null ){
 			titleTarget = document.getElementById('section_title');
@@ -116,7 +123,7 @@ class Menu {
 		}		
 		//check filter function		
 		var parentpages = this.filterParentPages(pages);		
-		
+		var bExpandedText = "";
 		//**INFO*/this loop stops me from merging the two functions - because I quickly grab the parentpages - ie, parentid = 0 and create menu from there. 
 		//rather than passing through pages (data from fetch) and using for loop to find page objects where parentid = 0 
 		//which would allow me to merge the two functions. 
@@ -125,13 +132,18 @@ class Menu {
 			//[shared start]
 			current_page = "";
 			html_count_string = "";
+			bExpandedText = "false";
+			
 			console.log("page.id=" + page.id + " this.id=" + this.id);
-			if(page.id == this.id) current_page = " class=\"current\" ";
+			//need to know if the page.id is a sub-or sub-sub page.etc. 
+			if(page.id == this.id) current_page = " class=\"current\" "; //can I open the parent page by using current class?
+			if (arr[1]==page.id) bExpandedText = "true";
 			//call populateSubPages to get substring and count 
-			sCMenu = this.populateSubPages(pages, page.id, "", 0); //passing through the whole pages data returned by json.fetch
+			sCMenu = this.populateSubPages(pages, page.id, "", 0, arr); //passing through the whole pages data returned by json.fetch
 			//console.log("/////" + page.pagename + "|||" + sCMenu[0]+ "|||" + sCMenu[1] + "//////");
 			if (sCMenu[1] != 0 ) html_count_string = "<div class=\"right-align\">[" + sCMenu[1] + "]</div>";	
-			_html_menu +=  "<li id='" + page.id + "' aria-expanded=\"false\" " + current_page + ">"  
+			//aria-expanded=\"false\"  update to aria_expanded to true if arr[1]=page.id
+			_html_menu +=  "<li id='" + page.id + "' aria-expanded=\"" + bExpandedText + "\" " + current_page + ">"  
 			_html_menu +=  	"<a onclick=\"menuItem_click(event," + page.pageid + "," + page.parentid + "," + this.sectionid + ")\" href=''" + current_page + ">" + page.pagename + html_count_string + "</a>";
 			_html_menu +=  		sCMenu[0];			
 			_html_menu +=  "</li>";
@@ -147,24 +159,29 @@ class Menu {
 		//console.log(_html_menu)
 		//menuTarget.appendChild(this.renderList(this.x));
 	}
-	populateSubPages(pages, _parentid, _html_menu, _count){
+	populateSubPages(pages, _parentid, _html_menu, _count, _arr){
 		var current_page = "";
 		var html_count_string = "";
 		var sCMenu;
-		
+		var bExpandedText = "";
+
 		_html_menu = _html_menu + "<ul>";
 		for (var page of pages) {
 	   		if(page.parentid == _parentid) {
 				//[shared start]
 				current_page = "";
 				html_count_string = "";
+				bExpandedText = "false";
+
 				console.log("page.id=" + page.id + " this.id=" + this.id);
-				if(page.id == this.id) current_page = " class=\"current\" ";;
+				if(page.id == this.id) current_page = " class=\"current\" ";
+				if (_arr[2]==page.id) bExpandedText = "true";
+
 				//call populateSubPages to get substring and count 
-				sCMenu = this.populateSubPages(pages, page.id, "", 0); //passing through the whole pages data returned by json.fetch
+				sCMenu = this.populateSubPages(pages, page.id, "", 0, _arr); //passing through the whole pages data returned by json.fetch
 				//console.log("/////" + page.pagename + "|||" + sCMenu[0]+ "|||" + sCMenu[1] + "//////");
 				if (sCMenu[1] != 0 ) html_count_string = "<div class=\"right-align\">[" + sCMenu[1] + "]</div>";	
-				_html_menu = _html_menu + "<li id='" + page.id + "' aria-expanded=\"false\" " + current_page + ">"  
+				_html_menu = _html_menu + "<li id='" + page.id + "' aria-expanded=\"" + bExpandedText + "\" " + current_page + ">"  
 				_html_menu = _html_menu +	"<a onclick=\"menuItem_click(event," + page.pageid + "," + page.parentid + "," + this.sectionid + ")\" href=''" + current_page + ">" + page.pagename + html_count_string + "</a>";
 				_html_menu = _html_menu + sCMenu[0];			
 				_html_menu = _html_menu + "</li>";
