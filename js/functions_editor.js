@@ -163,7 +163,7 @@ function addQuestion(_bwithContent){
 
 	    tinymce.init({
 	    	selector: '.editor-content',
-			plugins: 'table code lists fullscreen',
+			plugins: 'table code lists fullscreen link image',
 	  		toolbar: 'undo redo | formatselect | bold italic | ' +
 	    	'alignleft aligncenter alignright alignjustify | indent outdent | ' +
 			'table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol'    });

@@ -18,11 +18,13 @@ if ((url_id == "")||(url_id == null)){
 function menuItem_click(evt, _pageid, _parentid, _sectionid){
 	evt.preventDefault();
 	var parElem = evt.target.parentElement;
-	//parElem.style.backgroundColor = "red";
+	////evt.target will not bring back correct because we are preventing Default. //so does not change until we pushState
+	//alert("parElem" + parElem.id); 
 	if (parElem.getAttribute('aria-expanded') == 'false' || parElem.getAttribute('aria-expanded') ==  null) {
 		parElem.setAttribute('aria-expanded', "true");
 	} else {
 		parElem.setAttribute('aria-expanded', "false");
+		parElem.removeAttribute("class");
 	}
 	//let result2 = url.toString().includes("pages-edit");
 	if (gEditView){
@@ -30,11 +32,22 @@ function menuItem_click(evt, _pageid, _parentid, _sectionid){
 	}else{
 		history.pushState('data to be passed', 'Page Title', "pages?id=" + parElem.id);
 	}		
+	//alert(evt.target); //full URL - but could check for everything after id= then getElementById .. then change colour. 
+	//pages?id=11 - which may work - because 
+	document.querySelectorAll('li').forEach(b=>b.removeAttribute('class'));
+	
+	var newurl_id = window.location.toString().split("?id=").pop();
+	var newurl_idElem = document.getElementById(newurl_id);
+	//alert("window.location;" + window.location.toString());
+	//alert("newurl_id=" + newurl_id);
+	newurl_idElem.setAttribute("class", "active");
+	//if (evt.target == "testing") parElem.setAttribute("class", "active");
 	getContent(_pageid, parElem.id, _parentid, _sectionid)
 	//alert(parElem.id);
 	//getContent and update page. 
 	//updatePage(_pageid, parElem.id, _parentid, _sectionid);					
 }
+//This function expands and collapses the Q/A bars 
 function expand_collapse(evt){
 	//var coll = document.getElementsByClassName("collapsible");
 	//var i;
@@ -44,7 +57,7 @@ function expand_collapse(evt){
 	//alert(evt.target);
 	var event_Button = evt.target;
 	event_Button.classList.toggle("active");
-//event_Button.style.backgroundColor = "red"; //only updates on click
+	//event_Button.style.backgroundColor = "red"; //only updates on click
 	var content = event_Button.nextElementSibling;
 	if (content.style.maxHeight){
 		content.style.maxHeight = null;

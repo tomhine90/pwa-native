@@ -101,15 +101,18 @@ class Menu {
 		var sCMenu;
 		var _count = 0;
 		var html_count_string = ""
-		var titleTarget = "";
+		var titleTarget = "", editViewUrl = "";
 		//this.id is set in the setters and getters above when Menu class is instantiated.
 		//-----------finds SECTION details -------------------------///
 		this.findParent(pages, this.id, 0); //setting the sectionid
 		console.log("this.sectionid=" + this.sectionid);
 		console.log("this.sectionname=" + this.sectionname);
+		//<li class="Selected"><a href="./">Home</a></li>
+		if (gEditView) editViewUrl = "-edit";
 		if (this.sectionname != null ){
 			titleTarget = document.getElementById('section_title');
 			titleTarget.innerHTML = this.sectionname;
+			_html_menu += "<li id=\"" + this.sectionid + "\" class=\"no-break\"><a href=\"\\\"\>Home&nbsp;&nbsp;></a><a href=\"/pages" + editViewUrl + "?id=" + this.sectionid  + "\">&nbsp;&nbsp;Section Home</a></li>";	
 		}		
 		//check filter function		
 		var parentpages = this.filterParentPages(pages);		
@@ -122,15 +125,16 @@ class Menu {
 			//[shared start]
 			current_page = "";
 			html_count_string = "";
-			if(page.id == this.id) current_page = " class='' ";
+			console.log("page.id=" + page.id + " this.id=" + this.id);
+			if(page.id == this.id) current_page = " class=\"current\" ";
 			//call populateSubPages to get substring and count 
 			sCMenu = this.populateSubPages(pages, page.id, "", 0); //passing through the whole pages data returned by json.fetch
 			//console.log("/////" + page.pagename + "|||" + sCMenu[0]+ "|||" + sCMenu[1] + "//////");
 			if (sCMenu[1] != 0 ) html_count_string = "<div class=\"right-align\">[" + sCMenu[1] + "]</div>";	
-			_html_menu = _html_menu + "<li id='" + page.id + "' aria-expanded=\"false\" " + current_page + ">"  
-			_html_menu = _html_menu +	"<a onclick=\"menuItem_click(event," + page.pageid + "," + page.parentid + "," + this.sectionid + ")\" href=''" + current_page + ">" + page.pagename + html_count_string + "</a>";
-			_html_menu = _html_menu + sCMenu[0];			
-			_html_menu = _html_menu + "</li>";
+			_html_menu +=  "<li id='" + page.id + "' aria-expanded=\"false\" " + current_page + ">"  
+			_html_menu +=  	"<a onclick=\"menuItem_click(event," + page.pageid + "," + page.parentid + "," + this.sectionid + ")\" href=''" + current_page + ">" + page.pagename + html_count_string + "</a>";
+			_html_menu +=  		sCMenu[0];			
+			_html_menu +=  "</li>";
 			_count = _count + 1
 			//[shared finish]
 		}		
@@ -154,7 +158,8 @@ class Menu {
 				//[shared start]
 				current_page = "";
 				html_count_string = "";
-				if(page.id == this.id) current_page = " class='' ";
+				console.log("page.id=" + page.id + " this.id=" + this.id);
+				if(page.id == this.id) current_page = " class=\"current\" ";;
 				//call populateSubPages to get substring and count 
 				sCMenu = this.populateSubPages(pages, page.id, "", 0); //passing through the whole pages data returned by json.fetch
 				//console.log("/////" + page.pagename + "|||" + sCMenu[0]+ "|||" + sCMenu[1] + "//////");

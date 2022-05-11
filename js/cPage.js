@@ -59,8 +59,8 @@ class Page {
 			//console.log("data[0]" + data[0]);
 			for (var key in data[0]) {
 			    var arr = data[0][key];
-				console.log("key=" + key);
-				console.log("arr=" + arr);
+				//console.log("key=" + key);
+				//console.log("arr=" + arr);
 				if (key == "id"){ //id as returned from Pages data would be page_id
 					this.pageid = arr;
 				}else if(key == "name"){
@@ -91,7 +91,7 @@ class Page {
 			_pagecontent += "<p id=\"content\">" + this.content
 			_pagecontent += _qpagecontent;
 			_pagecontent += "</p>";								
-			console.log("_pagecontent=" + _pagecontent);
+			//console.log("_pagecontent=" + _pagecontent);
 			var pagecontent_Target = document.getElementById('content_main');
 			pagecontent_Target.classList.add("textsection" + _sectionid);
 			pagecontent_Target.innerHTML = _pagecontent;			
@@ -101,10 +101,10 @@ class Page {
 	//page.pageContentEdit(pagedata, _pageid, _url_id, _parentid, _sectionid);
 	pageContentEdit(data, _pageid, _menuid, _parentid, _sectionid){
 		if (_pageid != null){
-			console.log("_pageid != null");
-			console.log("_pageid=" + _pageid);
-			console.log("_menuid=" + _menuid);
-			console.log("data[0]" + data[0]);
+			//console.log("_pageid != null");
+			//console.log("_pageid=" + _pageid);
+			//console.log("_menuid=" + _menuid);
+			//console.log("data[0]" + data[0]);
 			// Now call the function inside fetch promise resolver
 			//				.then(this.CheckError())
 			//console.log("data[0].id=" + data[0].id);
@@ -162,11 +162,11 @@ class Page {
 						//add content to tinyMCE area
 						//var answer_string_content = jsonQObjects[i].contents
 						//***need to remove tinymce instances before re-instatiating. */						
-						console.log("1st jsonQObjects[i].contents=" + jsonQObjects[i].contents);
+						//console.log("1st jsonQObjects[i].contents=" + jsonQObjects[i].contents);
 						let tinmyMceInstance = tinymce.get(answer_string);
 						if( tinmyMceInstance != null ){
 							//var ed = tinyMCE.EditorManager.get("#editable_answer0")
-							console.log (answer_string + " ALREADY INITIALISED");
+							//console.log (answer_string + " ALREADY INITIALISED");
 							tinmyMceInstance.remove();
 						}
 						//console.log("answer_string" + answer_string);
@@ -175,7 +175,7 @@ class Page {
 							selector: "#" + answer_string,
 							plugins: 'table code lists fullscreen link image',
 							init_instance_callback : function(editor) {
-    							console.log('Editor: ' + editor.id + ' is now initialized.');
+    							//console.log('Editor: ' + editor.id + ' is now initialized.');
 								//editor.setContent(answer_string_content);
 	  						},
 						  	toolbar: 'undo redo | formatselect | bold italic | numlist bullist | link | image' +
