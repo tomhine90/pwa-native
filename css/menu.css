@@ -46,6 +46,9 @@ li.no-break a {
 white-space: nowrap; /* Don't forget this one */	
 float: left;
 }
+div.no-break {
+white-space: nowrap; /* Don't forget this one */	
+}
 div.right-align{
     float: right;
     margin-right: 10%;

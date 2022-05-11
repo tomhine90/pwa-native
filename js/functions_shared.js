@@ -34,7 +34,7 @@ function menuItem_click(evt, _pageid, _parentid, _sectionid){
 	}		
 	//alert(evt.target); //full URL - but could check for everything after id= then getElementById .. then change colour. 
 	//pages?id=11 - which may work - because 
-	document.querySelectorAll('li').forEach(b=>b.removeAttribute('class'));
+	document.querySelectorAll('li').forEach(b=> {if(b.getAttribute('class')!="no-break") b.removeAttribute('class')});
 	
 	var newurl_id = window.location.toString().split("?id=").pop();
 	var newurl_idElem = document.getElementById(newurl_id);
