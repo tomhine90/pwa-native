@@ -38,7 +38,13 @@ text-align:left;
 overflow: hidden;
 white-space: nowrap; /* Don't forget this one */
 text-overflow: ellipsis;
-
+}
+li.no-break {
+white-space: nowrap; /* Don't forget this one */	
+}
+li.no-break a {
+white-space: nowrap; /* Don't forget this one */	
+float: left;
 }
 div.right-align{
     float: right;
@@ -46,7 +52,7 @@ div.right-align{
     transform: translateX(20%);
 }
 .sidenav a:hover {
-  color: grey;
+  /*color: grey;*/
 }
 .sidenav #searchbox{
 	border: solid black 1px;
@@ -76,9 +82,9 @@ text-overflow: ellipsis;
 	padding-left:10px;
 	border-top:solid #f3f3f3 2px;
 	width: 97%;
-overflow: hidden;
-white-space: nowrap; /* Don't forget this one */
-text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap; /* Don't forget this one */
+	text-overflow: ellipsis;
 }
 #menu li.hide{
 	display:none;
@@ -89,6 +95,31 @@ text-overflow: ellipsis;
 li[aria-expanded="true"] ul li{
 	display:block;
 }
+/*li[aria-expanded="true"] ul li a{
+	color: #60c2d3;
+}*/
+li.active a, li.active ul li.active a{
+	color: #60c2d3;
+	font-weight: 300;
+}
+li.active ul li a{
+	color: #444;
+}
+
+.li.active a:hover, li.active ul li.active a:hover{
+	/*color: #1a2238;	
+	color: #490b3d;	
+	color: #ff6a3d;*/	
+	color: #60c2d3;	
+}
+.section2{
+}
+.section3{
+}
+.section4{
+}
+
+
 li[aria-expanded="false"] ul li{
 	display:none;
 }
