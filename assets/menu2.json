@@ -1,6 +1,0 @@
-{
-    "1":   	{"id": 1, "parentid": 0, "name": "bar1"},
-    "2":   	{"id": 2, "parentid": 0, "name": "bar1"},
-    "3":	{"id": 3, "parentid": 0, "name": "bar1"}
-}
-https://stackoverflow.com/questions/1946165/json-find-in-javascript
