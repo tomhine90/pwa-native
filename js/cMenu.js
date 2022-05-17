@@ -119,7 +119,7 @@ console.log("arr=" + arr); //array returns [4,8,10,11]  in order from top to bot
 		if (this.sectionname != null ){
 			titleTarget = document.getElementById('section_title');
 			titleTarget.innerHTML = this.sectionname;
-			_html_menu += "<li id=\"" + this.sectionid + "\" class=\"no-break\"><a href=\"\\\"\>Home&nbsp;&nbsp;></a><a href=\"/pages" + editViewUrl + "?id=" + this.sectionid  + "\">&nbsp;&nbsp;Section Home</a></li>";	
+			_html_menu += "<li id=\"" + this.sectionid + "\" class=\"no-break\"><a href=\"./\">Home&nbsp;&nbsp;></a><a href=\"./pages" + editViewUrl + "?id=" + this.sectionid  + "\">&nbsp;&nbsp;Section Home</a></li>";	
 		}		
 		//check filter function		
 		var parentpages = this.filterParentPages(pages);		
