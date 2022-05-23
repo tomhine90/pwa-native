@@ -7,7 +7,6 @@
 
 		<link type="text/css" rel="stylesheet" href="./css/style.css" />
 		<link type="text/css" rel="stylesheet" href="./css/pages.css" />
-
 		<link type="text/css" rel="stylesheet" href="./css/menu.css" />
 		
 		<link rel="manifest" href="./manifest.json">
@@ -54,7 +53,7 @@
 	//*****global variables set in functions_shared.js
 	window.onload = function() {
 		try {
-			getMenu(url_id);	//function in cMenu.js		
+			getMenu(url_id);	//function in functions_shared.js	
 		}catch{
 			getMenu(1)
 		}
@@ -69,8 +68,6 @@
 		}
 		//hide loading gif...
 		//document.getElementById("loader").style.display = "none";	
-		document.getElementById("loading_text").style.display = "none";	
-		document.getElementById("loader").style.display = "none";	
 	};
 	/*******event listeners*****/
 	const contentItems = document.querySelectorAll(".content");

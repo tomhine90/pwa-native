@@ -35,6 +35,9 @@ h2, h3, h4, h5, h6 {
 .textsection4 h2, .textsection4 h3, .textsection4 h4{
 	color: #60c2d3;	
 }
+.textsection58 h2, .textsection58 h3, .textsection58 h4{
+	color: #1a2238;	
+}
 
 p {
 	margin: 1.5em 0 2em 0;

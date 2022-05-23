@@ -16,183 +16,102 @@
 		<!--class declaration--> 
   		<script src="./js/cPage.js" ></script>
   		<script src="./js/cMenu.js" ></script>
+		<!--DOES NOT WORK FOR SUB_SUB NAVIGATION ?ARIA issue-->
+		<script src="./js/functions_shared.js"></script>		
 		<!--include module for editor--> 
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-		<script type="text/javascript" src="./simpleIDB/SimpleIDB.js"></script>
-		<script src="https://cdn.tiny.cloud/1/4rrbtndutqxpbakupzlul90fcyl9yj8mk9bp9aveo9jd55jo/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
-		<!--<script src="./js/f.js" type="module"></script>-->
   
-<script>
-window.addEventListener('load', ()=>{
-    console.log("in window load");	
-	if ("serviceWorker" in navigator) {
-	    try {
-      		navigator.serviceWorker.register('./serviceWorker.js');
-      		console.log("Service Worker Registered");
-    	} catch (error) {
-      		console.log("Service Worker Registration Failed");
+	<script>
+	window.addEventListener('load', ()=>{
+	    console.log("in window load");	
+		if ("serviceWorker" in navigator) {
+		    try {
+	      		navigator.serviceWorker.register('./serviceWorker.js');
+	      		console.log("Service Worker Registered");
+	    	} catch (error) {
+	      		console.log("Service Worker Registration Failed");
+			}
+	    }else{
+		    console.log("Service Worker not supported?");
 		}
-    }else{
-	    console.log("Service Worker not supported?");
-	}
-});
-</script>
-
-<script>
-
-//html => {
-  // console.log(html);
-  //document.getElementById('data').innerHTML = html;
-
-//page_content
-  //.then(data => console.log(JSON.stringify(data)));
-
-
-/*fetch("https://data.mongodb-api.com/app/data-dvhsb/endpoint/data/beta/action/insertOne", { 
-  headers: {
-    "Api-Key": "w9G1wfJxlt1fBSvHbh3FbrldksjqVeRWMtcw6HqAXVuuYVg4eH3CZa0xO2kFCmhG",
-    "Content-Type": "application/json",
-	"Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept, Authorization",
-	"Access-Control-Allow-Origin": "*",
-	"Access-Control-Allow-Methods":"GET, POST, PUT, DELETE, OPTIONS"
-  },
-  data: '{"id": "1070", "name": "Testing page insert from fetch", "content" : "<p>updating page content from fetch</p>"}}',
-  method: "POST"
-})
-*/
-</script>
+	});
+	</script>
 
 <title>Stack</title>
 
-<div id="content"></div>
-<!--
-Interesting website
-https://observablehq.com/@mbostock/fetch-with-basic-auth#login	
--->
-<!--https://data.mongodb-api.com/app/data-dvhsb/endpoint/data/beta-->
-<!--API key
-w9G1wfJxlt1fBSvHbh3FbrldksjqVeRWMtcw6HqAXVuuYVg4eH3CZa0xO2kFCmhG
--->
-<!--
-curl --location --request POST 'https://data.mongodb-api.com/app/data-dvhsb/endpoint/data/beta/action/findOne' \
---header 'Content-Type: application/json' \
---header 'Access-Control-Request-Headers: *' \
---header 'api-key: w9G1wfJxlt1fBSvHbh3FbrldksjqVeRWMtcw6HqAXVuuYVg4eH3CZa0xO2kFCmhG' \
---data-raw '{
-    "collection":"pages",
-    "database":"stack",
-    "dataSource":"Cluster-stack",
-    "projection": {"_id": 1}
-}'
--->
-<!--
-curl --request POST 'https://data.mongodb-api.com/app/data-dvhsb/endpoint/data/beta/action/insertOne' \
-  --header 'Content-Type: application/json' \
-  --header 'Access-Control-Request-Headers: *' \
-  --header 'api-key: w9G1wfJxlt1fBSvHbh3FbrldksjqVeRWMtcw6HqAXVuuYVg4eH3CZa0xO2kFCmhG' \
-  --data-raw '{
-      "dataSource": "Cluster-stack",
-      "database": "stack",
-      "collection": "pages",
-      "document": {
-        "id": "1060", "name": "Testing page insert from cURL", "content" : "<p>updating page content from cURL</p>"
-      }
-  }'	
--->
-<!--
-		<form action="https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages" method="post">
-      	<ul>
-        	<li>
-          	<label for="name">First Name:</label>
-          	<input type="text" id="name" name="name" required>
-        	</li>
-			<li class="button">
-          		<button type="submit">Submit Sign-Up Form</button>
-        	</li>
-		</form>
-<button>Click Me!</button>
--->
-<p>FOR POSTING</p>
-		<form id="myForm">
-			ID <input type="text"  id="editable_id" class="small">
-			ParentID <input type="text"  id="editable_parentid" class="small">
-			PageID <input type="text"  id="editable_pageid" class="small">
-			Page Name: <input type="text"  id="editable_name" class="med"><br/>
-			<strong>Content:</strong>
-			<textarea id="editable_content" name="editable_content" class="editor-content wide">
-			</textarea>
-    		<input id="postSubmit" type="submit" value="Create Page">
-		</form>
-
+<head>
 <script>
-
-const page_content = document.getElementById('content');
-/*fetch('https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?name=1')
-  .then(response => response.json())
-  .then(data => {
-			page_content.innerHTML = JSON.stringify(data); 
-			console.log (data);
-		})
-*/
-//BOTH OF THESE WORK 
-//CALLING CALC
-/*
-{
-  "id": 9922,
-  "parentid": 0,
-  "pageid": 9922,
-  "pagename": "new test", 
-  "content" : "content for the pages collection/table"
+///Example code I'm not necessarily going to use. '
+//zlFetch - change back to fetch?
+async function basiclogin (email, password) {
+  const response = await zlFetch.post(loginEndpoint, {
+    auth: {
+      username: email,
+      password: password
+    },
+    body: { /*...*/ }
+  })
 }
-*/
-//const jsonData = JSON.stringify({"a": 1,"b": 2,"op": "+", "content": "testing data from login page"})
-
-//https://bbx8g5lf6a.execute-api.eu-west-1.amazonaws.com/default/addpage
-//https://u6tgda2976.execute-api.eu-west-1.amazonaws.com/default/calc
-/*fetch('https://bbx8g5lf6a.execute-api.eu-west-1.amazonaws.com/default/addpage', {method: 'POST', body: jsonData})
-  .then(response => response.json())
-  .then(data => {
-			page_content.innerHTML = JSON.stringify(data); 
-			console.log (data);
-		})
-*/
-const thisForm = document.getElementById("myForm");
-thisForm.addEventListener('submit', async function (e) {
-
-var jsonData = JSON.stringify({ 
-		"id": document.getElementById("editable_id").value, 
-		"parentid": document.getElementById("editable_parentid").value, 
-		"pageid": document.getElementById("editable_pageid").value, 
-		"pagename": document.getElementById("editable_name").value, 
-		"content": document.getElementById("editable_content").value
-		})
-console.log ("jsonData" + jsonData);
-
-    e.preventDefault();
-    let response = await 
-	fetch('https://bbx8g5lf6a.execute-api.eu-west-1.amazonaws.com/default/addpage', {
-        method: 'POST',
-        body: jsonData
-    });
-    let result = await response.json();
-    alert(result)
-    console.log(result)
-});
-
-
-function createJSONstring(){
-	jsonData   = 	"{" 
-	jsonData  +=  	JSON.stringify("id") + ":" + JSON.stringify(document.getElementById("editable_id").value) + ","
-	jsonData  +=  	JSON.stringify("parentid") + ":" + JSON.stringify(document.getElementById("editable_parentid").value) + ","
-	jsonData  +=  	JSON.stringify("pageid") + ":" + JSON.stringify(document.getElementById("editable_pageid").value) + ","
-	jsonData  +=  	JSON.stringify("pagename") + ":" + JSON.stringify(document.getElementById("editable_name").value) + ","
-	jsonData  +=  	JSON.stringify("content") + ":" + JSON.stringify(document.getElementById("editable_name").value) + ","
-	jsonData += "}"
-	return jsonData;
-	
+async function fromWhere (){
+	fetch("https://httpbin.org/basic-auth/user/passwd", {
+	  headers: new Headers({
+	    "Authorization": `Basic ${base64.encode(`${login}:${password}`)}`
+	  }),
+	}).then(response => {
+	  if (!response.ok) throw new Error(response.status);
+	  return response.json();
+	})
 }
+//////
+
+window.onload = function() {
+	document.getElementById("loader").style.display = "none";
+	document.getElementById("loginForm").onsubmit = function(e){
+		e.preventDefault();
+		handleSubmit();
+	};	
+	//document.getElementById("submitBtn").addEventListener("submit", handleSubmit());
+}
+
+//attach event onsubmit
+
+async function handleSubmit () {
+	//...pass through username and password... 
+	//
+	var username = document.getElementById("username").value;
+	var password = document.getElementById("password").value;
+	document.getElementById("loader").style.display = "block";
+
+	fetch("https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?username=" + username + "&password=" + password)
+		.then(response => response.json()) //NEW condensed
+		.then(data => { 
+			console.log (data);
+			document.getElementById("loader").style.display = "none";
+		}); 
+	//...don't think I need JWT at present'
+  	// Extract the JWT from the response
+  	//const { jwt_token } = await response.json()
+  	// Do something the token in the login method
+  	//await login({ jwt_token })
+}
+
+
 </script>
-
-
-
 </head>
+
+<body>
+	<div id="page">
+		<div class="content main" id="content_main">
+		<div id="loader">loading.....</div>		
+
+		<form method="post" id="loginForm">
+	          	<label for="username">Email &nbsp;&nbsp;</label>
+	          	<input type="text" id="username" name="username" required><br/>
+	          	<label for="password">Password&nbsp;&nbsp;</label>
+	          	<input type="text" id="password" name="password" required><br/>
+          		<button type="submit" id="submitBtn">Login</button>
+		</form>
+	</div>
+</div>
+
+</body>
+</html>

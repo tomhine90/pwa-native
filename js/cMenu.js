@@ -57,6 +57,11 @@ class Menu {
 		        // body of case N
 				this._bgcolor = "#60c2d3"
 		        break;	
+		    case 58:  
+		        // body of case 1
+				this._bgcolor = "#bd1e51"
+				//loadPrimary Navigation etc  json file
+		        break;
 	    	default:
 		        // body of case default
 				this._bgcolor = "#fff"
@@ -70,7 +75,7 @@ class Menu {
 	
 	//METHODS
 	//iterate up pages tree to find the parent node
-	findParent(pages, _id, _count, _arr){
+	findSection(pages, _id, _count, _arr){
 		let page = pages.find(el => el.id === parseInt(_id));
 		if (_count == 0) {
 			this.pageid = page["pageid"];
@@ -88,7 +93,7 @@ class Menu {
 			//return page["id"];
 		}else {
 			_count = _count + 1;
-			this.findParent(pages, page["parentid"], _count, _arr)
+			this.findSection(pages, page["parentid"], _count, _arr)
 		}
 		_arr.push(_id);
 		return _arr;
@@ -110,7 +115,7 @@ class Menu {
 		//-----------finds SECTION details -------------------------///
 		//iterates up the tree to find the sectionID - can use to get an Array - starting with the sectionID and each [] node down.
 		var arr = [];
-		this.findParent(pages, this.id, 0, arr); //setting the sectionid
+		this.findSection(pages, this.id, 0, arr); //setting the sectionid
 console.log("arr=" + arr); //array returns [4,8,10,11]  in order from top to bottom...
 
 		//console.log("this.sectionid=" + this.sectionid);

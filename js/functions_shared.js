@@ -98,10 +98,11 @@ function closeNav() {
 /******* *****/
 //TODO push into offline indexeddb
 //need to call lamda and mongo to get menu content based on param id. 
+//	returnedString.split("|").pop(); ==> for sections allowed.  
 function getMenu(_menuid){
 	//instatiate menu class  
 	let menu = new Menu(_menuid);  	
-
+	
 	//passing through -1 gets the entire menu json file
 	fetch("https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?id=-1")
 		.then(response => response.json()) //NEW condensed
@@ -112,6 +113,8 @@ function getMenu(_menuid){
 			//console.log ("menu.pageid" + menu.pageid);
 			getContent(menu.pageid, _menuid, menu.parentid, menu.sectionid); //getContent function in cPage class js file
 			//primary_nav.sectionid
+			document.getElementById("loading_text").style.display = "none";	
+			document.getElementById("loader").style.display = "none";	
 		})
 }	
 //called from getMenu as data needed from menu.json to populate page. 

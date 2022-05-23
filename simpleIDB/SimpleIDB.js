@@ -7,13 +7,24 @@
 */
 
 class SimpleIDB {
-    open(dname, sname, options) {
+	//open 
+/*
+onupgradeneeded is called when you change the db version : from no database to first version, first version to second version ...
+onsuccess is called each time you make a new request : even if the database schemas has not been changed.
+*/
+    open(dname, sname, options, _version) {
         this.dname=dname
         var sflag=("schema" in options)
         this.sflag=sflag
 	    return new Promise(function(resolve) {
-    	    var r = indexedDB.open(dname)
+    	    var r = null; 
+			if (_version){
+				r = indexedDB.open(dname, _version);				
+			}else{
+				r = indexedDB.open(dname);								
+			}
 		    r.onupgradeneeded = function(e) {
+			console.log("opened new indexedDB");
 		        var idb = r.result
 		        var store
 		        if(sflag)
@@ -35,6 +46,7 @@ class SimpleIDB {
 		    }
 		    r.onsuccess = function(e) {
 			    let idb = r.result
+console.log ('success', idb);
 			    resolve(idb)
 	        }
     	    r.onerror = function (e) {
@@ -43,12 +55,22 @@ class SimpleIDB {
 	    })
     }
 
+/*
+var store;
+  try {
+    store = request.transaction.objectStore('yourStore');
+  }
+  catch(e) {
+    store = db.createObjectStore('yourStore');
+}
+*/ 
     fill(idb, sname, arr) {
         let sflag=this.sflag
         return new Promise(function(resolve) {
 	        let tactn = idb.transaction(sname, "readwrite")
             var store = tactn.objectStore(sname)
 	        for(var obj of arr) {
+		console.log("in for loop in fill function");
 	            if(sflag)
    	       	        store.put(obj)
    	       	    else {
