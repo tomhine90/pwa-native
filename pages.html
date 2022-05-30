@@ -18,6 +18,21 @@
 		<script src="./js/functions_data.js"></script>		
 		<script src="./js/functions_shared.js"></script>		
 		<!--include module for editor--> 
+<script>
+window.addEventListener('load', ()=>{
+    console.log("in window load");	
+	if ("serviceWorker" in navigator) {
+	    try {
+      		navigator.serviceWorker.register('./serviceWorker.js');
+      		console.log("Service Worker Registered");
+    	} catch (error) {
+      		console.log("Service Worker Registration Failed");
+		}
+    }else{
+	    console.log("Service Worker not supported?");
+	}
+});
+</script>
 	</head>
 	<body>
 		<div id="page">
