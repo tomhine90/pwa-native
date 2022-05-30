@@ -42,6 +42,7 @@ async function savePage(){
 	//document.getElementById("form1").disabled = false;
 }	
 /*******add Sub Page button */
+//add SubPage
 function addSubPgae(){
 	var _menuid = "-1";
 	var _parentid = document.getElementById("editable_id").value;
