@@ -83,6 +83,7 @@ class Menu {
 	//METHODS
 	//TODO ****need to iterate and populate array so that the menu expands
 	////***only good for three levels */
+	//Not know being used...
 	findSectionwIDB_(_menu_cont, _id, _count, _arr, _sectionid){
 		//console.log("in findSectionwIDB_ Function");
 		//console.log("_menu_cont=" + _menu_cont);
