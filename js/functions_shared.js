@@ -1,6 +1,8 @@
 
 /*******global variables*****/
 var gEditView = false;
+var gIsLoggedIn = false;
+
 var url = window.location;
 if (url.toString().includes("pages-edit")) gEditView = true;
 
@@ -10,45 +12,58 @@ url_id = urlParams.get('id');
 if ((url_id == "")||(url_id == null)){
 	url_id = "1";	
 }
+
 /*******global variables*****/
 function opentoID(){
 	
 }
 
-/*******end of event listeners*****/
 /*FUNCTIONS*/
-function menuItem_click(evt, _pageid, _parentid, _sectionid){
-	evt.preventDefault();
-	var parElem = evt.target.parentElement;
-	////evt.target will not bring back correct because we are preventing Default. //so does not change until we pushState
-	//alert("parElem" + parElem.id); 
-	if (parElem.getAttribute('aria-expanded') == 'false' || parElem.getAttribute('aria-expanded') ==  null) {
-		parElem.setAttribute('aria-expanded', "true");
-	} else {
-		parElem.setAttribute('aria-expanded', "false");
-		parElem.removeAttribute("class");
-	}
-	//let result2 = url.toString().includes("pages-edit");
-	if (gEditView){
-		history.pushState('data to be passed', 'Page Title', "pages-edit?id=" + parElem.id);
-	}else{
-		history.pushState('data to be passed', 'Page Title', "pages?id=" + parElem.id);
-	}		
-	//alert(evt.target); //full URL - but could check for everything after id= then getElementById .. then change colour. 
-	//pages?id=11 - which may work - because 
-	document.querySelectorAll('li').forEach(b=> {if(b.getAttribute('class')!="no-break") b.removeAttribute('class')});
-	
-	var newurl_id = window.location.toString().split("?id=").pop();
-	var newurl_idElem = document.getElementById(newurl_id);
-	//alert("window.location;" + window.location.toString());
-	//alert("newurl_id=" + newurl_id);
-	newurl_idElem.setAttribute("class", "active");
-	//if (evt.target == "testing") parElem.setAttribute("class", "active");
-	getContent(_pageid, parElem.id, _parentid, _sectionid)
-	//alert(parElem.id);
-	//getContent and update page. 
-	//updatePage(_pageid, parElem.id, _parentid, _sectionid);					
+//**************************Shared functions with callbackFunction passed through******************************************//
+async function handleLoginSubmit (callbackFunction) {
+	//...pass through username and password... 
+	//[sectionid, menupages, contentpages]
+	//[0] array used for information
+	var username = document.getElementById("username").value;
+	var password = document.getElementById("password").value;
+	///
+	document.getElementById("para_loader").style.display = "block";
+
+	fetch("https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?username=" + username + "&password=" + password)
+		.then(response => response.json()) //NEW condensed
+		.then(data => { 
+			//if no section returned then data[0] = null otherwise section_id is data[0]
+			//if password incorrect then data[1] == "password incorrect" //data[1] contains empty array [] 
+			//try{
+			console.log("data[1].length" + data[1].length);
+			let array_length = data[1].length; 
+			if (array_length > 1){ //ie, if menupages array length contains more than 1 record.
+				indexdb_fill(data).then(() => { 
+					//console.log(data);
+					document.getElementById("loginForm").style.display = "none";	
+					getUserInfo(cidb, callbackFunction); //calls menu from UserInfo function			
+					//if (data[0][0].section != NaN) window.location = "pages.html?id=" + data[0][0].section;
+				});
+			}else if(array_length == 1){ //if contains 1 record that record will be a "password incorrect" record
+				document.getElementById("passwordmessage").innerHTML = data[1][array_length-1];		
+				document.getElementById("loginForm").onsubmit = function(e){
+					e.preventDefault();
+					handleLoginSubmit(callbackFunction);
+				};
+			}	
+			//}catch(e){
+			//	document.getElementById("content_main").innerHTML += e
+			//}
+			document.getElementById("para_loader").style.display = "none";
+		}); 
+	//...don't think I need JWT at present'
+  	// Extract the JWT from the response
+  	//const { jwt_token } = await response.json()
+  	// Do something the token in the login method
+  	//await login({ jwt_token })
 }
+
+
 //This function expands and collapses the Q/A bars 
 function expand_collapse(evt){
 	//var coll = document.getElementsByClassName("collapsible");
@@ -69,7 +84,6 @@ function expand_collapse(evt){
 	//});
 //}
 }
-
 function addEvent(cItem){
 	cItem.addEventListener( 'click', evnt => {
 		//check to see if menuItem if menuItem check to see if has Children
@@ -95,63 +109,7 @@ function closeNav() {
 }
 
 
-/******* *****/
-//TODO push into offline indexeddb
-//need to call lamda and mongo to get menu content based on param id. 
-//	returnedString.split("|").pop(); ==> for sections allowed.  
-function getMenu(_menuid){
-	//instatiate menu class  
-	let menu = new Menu(_menuid);  	
-	
-	//passing through -1 gets the entire menu json file
-	fetch("https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?id=-1")
-		.then(response => response.json()) //NEW condensed
-		.then(data => {
-			menu.filter_populateMenu(data, _menuid) //prints out menu of section we are in --> see cMenu.js
-			//console.log("in getMenu then statement=" + _url_id)
-			//console.log ("_url_id" + _url_id);
-			//console.log ("menu.pageid" + menu.pageid);
-			getContent(menu.pageid, _menuid, menu.parentid, menu.sectionid); //getContent function in cPage class js file
-			//primary_nav.sectionid
-			document.getElementById("loading_text").style.display = "none";	
-			document.getElementById("loader").style.display = "none";	
-		})
-}	
-//called from getMenu as data needed from menu.json to populate page. 
-//call listPages - ie --> return data from ListPages lamda from Pages data. 
-function getContent(_pageid, _menuid, _parentid, _sectionid){
-	//instatiate page class  
-	//console.log("IN getContent()=" + _pageid)
-	let page = new Page(_pageid);  	
-		
-	//console.log("in getContent after new Page() _url_id=" + _url_id)
-	//console.log ("_pageid" + _pageid);
-	fetch("https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?content_id=" + _pageid + "")
-		  .then((response) => response.json())
-		  .then((pagedata) => {
-				if(gEditView){
-					page.pageContentEdit(pagedata, _pageid, _menuid, _parentid, _sectionid);				
-				}else{
-					page.pageContent(pagedata, _pageid, _menuid, _parentid, _sectionid);
-				}
-				//console.log("in getContent after then statement _url_id=" + _url_id)
-				//console.log("pagedata[0]=" + pagedata[0]);
-				//pageContent(_pageid, _sectionid)
-			})
-		  .catch((err) => {
-		  	console.log("custom err=" + err);
-		     //Do something for an error here
-		  })
-	//I guess more of a push than a pull 
-	//so once this is done it pushes (callsback)
-}
-	/*
-  	plugins: 'link',
-  	menubar: 'insert',
-  	toolbar: 'link'
-	*/
-	//plugins: 'lists',
-  	//toolbar: 'numlist bullist'
+
 function getParameterByName(name, url = window.location.href) {
     name = name.replace(/[\[\]]/g, '\\$&');
     var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),

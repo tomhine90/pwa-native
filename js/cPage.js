@@ -53,8 +53,8 @@ class Page {
 		var jsonQObjects, page_content;
 
 		if (_pageid != null){
-			//console.log("_pageid != null");
-			//console.log("_pageid=" + _pageid);
+			console.log("_pageid != null");
+			console.log("_pageid=" + _pageid);
 			//console.log("_menuid=" + _menuid);
 			//console.log("data[0]" + data[0]);
 			for (var key in data[0]) {
@@ -97,12 +97,49 @@ class Page {
 			pagecontent_Target.innerHTML = _pagecontent;			
 		}
 	}
-	
+	//page.pageContentEdit(pagedata, _pageid, _url_id, _parentid, _sectionid);
+	JSONPageContent(page_cont, _pageid, _menuid, _parentid, _sectionid){
+		var _pagecontent = "", _qpagecontent = "";
+		var jsonQObjects, page_content;
+//console.log(page_cont);
+//console.log(page_cont.id);
+//console.log(page_cont.questions);
+//console.log("_pageid", _pageid);
+		
+		if (_pageid != null){
+			//set class variables.
+			this.pageid = page_cont.id;
+			this.name = page_cont.name;
+			this.content = page_cont.content;
+			jsonQObjects = JSON.parse(page_cont.questions)
+			for (var i = 0; i <= jsonQObjects.length -1; i++){
+						_qpagecontent += 	"<div class=\"container\">";
+						_qpagecontent += 		"<button type=\"button\" class=\"collapsible section" + _sectionid + "\" onclick=\"expand_collapse(event)\">" + jsonQObjects[i].question + "</button>";
+						_qpagecontent += 		"<div class=\"col_content\">";
+						_qpagecontent += 			jsonQObjects[i].contents
+						_qpagecontent += 		"</div>"					
+						_qpagecontent += "</div>";
+			}
+			//print
+			//_pagecontent += "<h3>" + this.name + "</h3>"
+			_pagecontent += "<p id=\"content\">" + this.content
+			_pagecontent += _qpagecontent;
+			_pagecontent += "</p>";								
+			//console.log("_pagecontent=" + _pagecontent);
+			var pagecontent_Target = document.getElementById('content_main');
+			pagecontent_Target.classList.add("textsection" + _sectionid);
+			pagecontent_Target.innerHTML = _pagecontent;			
+		}
+	}
+	printPageError(){
+			var pagecontent_Target = document.getElementById('content_main');
+			pagecontent_Target.innerHTML = "No page match";			
+	}
 	//page.pageContentEdit(pagedata, _pageid, _url_id, _parentid, _sectionid);
 	pageContentEdit(data, _pageid, _menuid, _parentid, _sectionid){
 		if (_pageid != null){
 			//console.log("_pageid != null");
-			//console.log("_pageid=" + _pageid);
+			console.log("_pageid=" + _pageid);
 			//console.log("_menuid=" + _menuid);
 			//console.log("data[0]" + data[0]);
 			// Now call the function inside fetch promise resolver
@@ -174,10 +211,14 @@ class Page {
 						tinymce.init({
 							selector: "#" + answer_string,
 							plugins: 'table code lists fullscreen link image',
-							init_instance_callback : function(editor) {
-    							//console.log('Editor: ' + editor.id + ' is now initialized.');
-								//editor.setContent(answer_string_content);
-	  						},
+							init_instance_callback: function (editor) {
+								// Shortcuts and useful things go here.
+								editor.shortcuts.add("alt+s", "Save Me My Content", function() {
+									savePage();		    				
+									//alert("saved");
+				  				}),
+					    		editor.shortcuts.add("alt+b", "A New Way To Bold", "Bold");
+				  			},
 						  	toolbar: 'undo redo | formatselect | bold italic | numlist bullist | link | image' +
 							'alignleft aligncenter alignright alignjustify | indent outdent | ' +
 							'table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol'
@@ -284,7 +325,7 @@ ed.render();
 	}
 	
 	setPageContents(_pagedata, _pageid){
-		console.log(_pagedata);
+		//console.log(_pagedata);
 		return _pagedata;
 	}
 	

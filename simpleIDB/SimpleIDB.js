@@ -46,7 +46,6 @@ onsuccess is called each time you make a new request : even if the database sche
 		    }
 		    r.onsuccess = function(e) {
 			    let idb = r.result
-console.log ('success', idb);
 			    resolve(idb)
 	        }
     	    r.onerror = function (e) {
@@ -70,9 +69,10 @@ var store;
 	        let tactn = idb.transaction(sname, "readwrite")
             var store = tactn.objectStore(sname)
 	        for(var obj of arr) {
-		console.log("in for loop in fill function");
-	            if(sflag)
+	            if(sflag){
+					if (idb.name == "user") obj.timestamp = Date.now();
    	       	        store.put(obj)
+				}
    	       	    else {
    	       	        let key = Object.keys(obj)[0]
    	       	        store.put(obj[key], key)

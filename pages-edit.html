@@ -15,12 +15,13 @@
 		<!--class declaration--> 
   		<script src="./js/cPage.js" ></script>
   		<script src="./js/cMenu.js" ></script>
+		<script type="text/javascript" src="./simpleIDB/SimpleIDB.js"></script>
 		<!--DOES NOT WORK FOR SUB_SUB NAVIGATION ?ARIA issue-->
+		<script src="./js/functions_data.js"></script>		
 		<script src="./js/functions_shared.js"></script>		
 		<script src="./js/functions_editor.js"></script>		
 		<!--include module for editor--> 
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-		<script type="text/javascript" src="./simpleIDB/SimpleIDB.js"></script>
 		<script src="./js/tinymce/tinymce.min.js"></script>
 		
 <script>
@@ -50,21 +51,33 @@
 					</div>
 				</div>
 			</div>
+			<div class="headerimage"><img src="https://stackicm.s3.eu-west-1.amazonaws.com/criticalcare3.jpg"/></div>			
 			<div class="content main" id="content_main">
-				<!--<h3>Title</h3>--><div id="loading_text">loading ....</div><div class="lds-hourglass" id="loader"></div>
-				<p id="content"><br/>
-				<!--START OF EDIT-->
-				<!--method="post" action="http://localhost:8086/uploadform"-->
+				<h3></h3><div id="para_loader"><p><div id="loading_text">loading ....</div><div class="lds-hourglass" id="loader"></div></p></div>
+				<!--content once the indexedDB is loaded-->
+				<p id="content">
+					<!--LOGIN START used on login page-->
+					<form method="post" id="loginForm">
+						<h3>Login</h3>
+		          		<label for="username">Email &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+		          		<input type="text" id="username" name="username" required><br/>
+		          		<label for="password">Password&nbsp;&nbsp;</label>
+		          		<input type="text" id="password" name="password" required><br/>&nbsp;<br/>
+	          			<button type="submit" id="submitBtn">Login</button>
+					</form>
+					<p id="passwordmessage"></p>
+					<!--LOGIN END used on login page-->
+					<!--*******START OF EDIT*************-->
 					<form name="form1" id="form1"  class="form_addcontent">
-					<!--NEED TO ADD ID, NAME, PARENTID--><!--GET GREATEST NO FROM DATABASE AND ADD 1-->
-					<!-- IF I TAKE THE ID OF CURRENT and any page added would be child page-->
-					  ID <input type="text"  id="editable_id" class="small">
-					  SID<input type="text"  id="editable_sectionid" class="small hidden">
-					  ParentID <input type="text"  id="editable_parentid" class="small">
-					  PageID <input type="text"  id="editable_pageid" class="small">
-					  Page Name: <input type="text"  id="editable_name" class="med">
-					<input type="button" value="Add SubPage" onClick="addSubPgae()" class="alignright">
-					<br/>
+						<!--NEED TO ADD ID, NAME, PARENTID--><!--GET GREATEST NO FROM DATABASE AND ADD 1-->
+						<!-- IF I TAKE THE ID OF CURRENT and any page added would be child page-->
+						ID <input type="text"  id="editable_id" class="small">
+						SID<input type="text"  id="editable_sectionid" class="small">
+						ParentID <input type="text"  id="editable_parentid" class="small">
+						PageID <input type="text"  id="editable_pageid" class="small">
+						Page Name: <input type="text"  id="editable_name" class="med">
+						<input type="button" value="Add SubPage" onClick="addSubPgae()" class="alignright">
+						<br/>
 						<strong>Content:</strong>
 						<textarea id="editable_content" name="editable_content" class="editor-content wide">
 					    </textarea>
@@ -89,69 +102,117 @@
 <!--changed the params when  menuItem_click(evt) is run -->
 <!--CLASS SETTINGS-->
 <script>
-	////finished loading menu	
+	//*****global variables set in functions_shared.js
+	var cidb = new SimpleIDB();
+	var bIsLoggedIn = false; //set this if logged in and content in IndexedDB
+
+
+	//callbackFunction - specific to menu data - called from IDB OR fetch (edit)
 	window.onload = function() {
-		try {
-			getMenu(url_id);	//function in cMenu.js		
-		}catch{
-			getMenu(1)
-		}
-		if (gEditView){
-			tinymce.init({
-				selector: '.editor-content',
-					plugins: 'table code lists fullscreen link image',
-				  	toolbar: 'undo redo | formatselect | bold italic | numlist bullist | link | image' +
-				'alignleft aligncenter alignright alignjustify | indent outdent | ' +
-				'table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol'
-			});
-		}
-		//hide loading gif...
-		//document.getElementById("loader").style.display = "none";	
-		document.getElementById("loading_text").style.display = "none";	
-		document.getElementById("loader").style.display = "none";	
-	};
-	if(gEditView){
+		document.getElementById("para_loader").style.display = "block";
+		//check in IndexedDB - to see if this user has rights to edit 
+		getUserInfo(cidb, getRemoteMenuData); //onload just checks the user indexedDB and Menu (to make sure the user should be able to see content)	
+		
+		//try {
+		//	getRemoteMenuData(url_id);	//function in cMenu.js		
+		//}catch{
+		//	getRemoteMenuData(1)
+		//}		
+		tinymce.init({
+			selector: '.editor-content',
+			init_instance_callback: function (editor) {
+				// Shortcuts and useful things go here.
+				editor.shortcuts.add("alt+s", "Save Me My Content", function() {
+					savePage();		    				
+					//alert("saved");
+  				}),
+	    		editor.shortcuts.add("alt+b", "A New Way To Bold", "Bold");
+  			},
+			plugins: 'table code lists fullscreen link image',
+			toolbar: 'undo redo | formatselect | bold italic | numlist bullist | link | image' +
+			'alignleft aligncenter alignright alignjustify | indent outdent | ' +
+			'table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol'
+		});	
+		/*******event listeners*****/
+		document.getElementById("loginForm").onsubmit = function(e){
+			e.preventDefault();
+			handleLoginSubmit(getRemoteMenuData); //handleSubmit() in functions_shared.js
+		}		
 		const thisForm = document.getElementById("form1");
 		thisForm.addEventListener('submit', async function (e) {
-		//alert("form submitted");
-		e.preventDefault();	
-		//posted id to addPage is menuid - as addpage adds record to Menu and Pages data
-		var jsonData = JSON.stringify({ 
-			id: document.getElementById("editable_id").value, 
-			parentid: document.getElementById("editable_parentid").value, 
-			pageid: document.getElementById("editable_pageid").value, 
-			"pagename": document.getElementById("editable_name").value, 
-			"content": tinyMCE.get('editable_content').getContent(), 
-			"questions" : "[" + writeSubArray() + "]"
-		})
-		console.log ("jsonData" + jsonData);
-		let response = await 
-			fetch('https://bbx8g5lf6a.execute-api.eu-west-1.amazonaws.com/default/addpage', {
-				method: 'POST',
-			    body: jsonData
-			});
-			let result = await response.json();
-			let parsedData = JSON.parse(result.body);
-			console.log(parsedData.id)
-			console.log(parsedData.pageid)
-			alert("Saved Page");
+			//alert("form submitted");
+			e.preventDefault();	
+			savePage();
 		});
-	}
-	/*******event listeners*****/
-	const contentItems = document.querySelectorAll(".content");
-	contentItems.forEach(function(cItems) {
-		//alert(cItems);
-		addEvent(cItems);
-	});				
-	document.querySelector( 'a[href="#menu"]' )
-		.addEventListener( 'click', evnt => {
-			changeNavState();
-			evnt.preventDefault();
-			//drawer.open();
-			//document.querySelector( '.mm-ocd--open' ).style.max-width = "20em";
-	});
-	/*******event listeners*****/
+		//to close Navigation
+		const contentItems = document.querySelectorAll(".content");
+		contentItems.forEach(function(cItems) {
+			//alert(cItems);
+			addEvent(cItems);
+		});				
+		document.querySelector( 'a[href="#menu"]' )
+			.addEventListener( 'click', evnt => {
+				changeNavState();
+				evnt.preventDefault();
+				//drawer.open();
+				//document.querySelector( '.mm-ocd--open' ).style.max-width = "20em";
+		});
+		document.onkeydown = (e) => {
+ 			 if (e.ctrlKey && e.key === 's') {
+	    		e.preventDefault();
+				if (bIsLoggedIn == true){
+	    			savePage();			
+				}
+  			}
+		}
+		/*******event listeners*****/			
+	};
 
+//add in other features of being loggedIn
+function UserLogOut(){
+	document.getElementById("loginForm").style.display = "block";	
+		deleteDatabases("user"); //delete before recreating
+		deleteDatabases("menu"); //delete before recreating
+		deleteDatabases("pages"); //delete before recreating
+		//show login form. 				
+		document.getElementById("loginForm").onsubmit = function(e){
+			e.preventDefault();
+			handleLoginSubmit(getRemoteMenuData);
+		}
+	document.getElementById("para_loader").style.display = "none";
+}
+//add in other features of being loggedIn
+function UserLoggedIn (){
+	//document.getElementById("para_loader").style.display = "block";
+	document.getElementById("loginForm").style.display = "none";	
+	document.getElementById("form1").style.display = "block";	
+}
+
+function menuItem_click(evt, _pageid, _parentid, _sectionid){
+	evt.preventDefault();
+	var parElem = evt.target.parentElement;
+	////evt.target will not bring back correct because we are preventing Default. //so does not change until we pushState
+	//alert("parElem" + parElem.id); 
+	if (parElem.getAttribute('aria-expanded') == 'false' || parElem.getAttribute('aria-expanded') ==  null) {
+		parElem.setAttribute('aria-expanded', "true");
+	} else {
+		parElem.setAttribute('aria-expanded', "false");
+		parElem.removeAttribute("class");
+	}
+	
+	history.pushState('data to be passed', 'Page Title', "pages-edit?id=" + parElem.id);
+	
+	document.querySelectorAll('li').forEach(b=> {if(b.getAttribute('class')!="no-break") b.removeAttribute('class')});
+	
+	var newurl_id = window.location.toString().split("?id=").pop();
+	var newurl_idElem = document.getElementById(newurl_id);
+	//alert("window.location;" + window.location.toString());
+	//alert("newurl_id=" + newurl_id);
+	newurl_idElem.setAttribute("class", "active");
+	//if (evt.target == "testing") parElem.setAttribute("class", "active");
+	
+	getRemotePageData(_pageid, parElem.id, _parentid, _sectionid)	
+}
 </script>
 
 </body>

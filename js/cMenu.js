@@ -35,6 +35,13 @@ class Menu {
 		//if ((this._sectionid == null)|| (typeof this._sectionid == 'undefined')) this._sectionid = 0;
 		return this._pageid;
 	}
+	set sectionname(x){
+		this._sectionname = x;
+	}
+	get sectionname(){
+		//if ((this._sectionid == null)|| (typeof this._sectionid == 'undefined')) this._sectionid = 0;
+		return this._sectionname;
+	}
 	
 	//iterate up menu till you get to parentid = 0 then get name and go through cases. 
 	set color(x){
@@ -74,34 +81,70 @@ class Menu {
 	}
 	
 	//METHODS
+	//TODO ****need to iterate and populate array so that the menu expands
+	////***only good for three levels */
+	findSectionwIDB_(_menu_cont, _id, _count, _arr, _sectionid){
+		//console.log("in findSectionwIDB_ Function");
+		//console.log("_menu_cont=" + _menu_cont);
+		//console.log("_id=" + _id);
+		try{
+			let menu_obj = _menu_cont.find(el => el.id === parseInt(_id));		
+				this.id = menu_obj["id"];
+				this.pageid = menu_obj["pageid"];
+				this.parentid = menu_obj["parentid"];
+			let section_obj = _menu_cont.find(el => el.id === parseInt(_sectionid));		
+				this.sectionid = section_obj["sectionid"];
+				this.sectionname = section_obj["pagename"];
+				this.color = this.sectionid;	
+			if ((menu_obj["parentid"] == 0) || (_count == 5)){
+								
+			}else{
+				
+			}			
+			_arr.push(this.sectionid);
+			_arr.push(this.parentid);
+			_arr.push(this.id);
+			//console.log ("_arr" , _arr)
+		}catch(e){
+			console.log ("URL id does not match any page in the Users page array either in IndexDB or fetch")
+		}
+		
+	}
 	//iterate up pages tree to find the parent node
-	findSection(pages, _id, _count, _arr){
-		let page = pages.find(el => el.id === parseInt(_id));
+	findSection(menu_cont, _id, _count, _arr){
+		//console.log("_id" + parseInt(_id));	
+		let menu_obj = menu_cont.find(el => el.id === parseInt(_id));
 		if (_count == 0) {
-			this.pageid = page["pageid"];
-			this.parentid = page["parentid"];
+			this.pageid = menu_obj["pageid"];
+			this.parentid = menu_obj["parentid"];
 			//console.log ("page[\"pageid\"]" + page["pageid"]);
 			//console.log ("pageid" + this.pageid);
 			//console.log ("parentid" + this.parentid);
 		}
 		//console.log (page["parentid"]);
-		if ((page["parentid"] == 0) || (_count == 5)){
-			this.sectionid = page["id"];
-			this.sectionname = page["pagename"];
+		if ((menu_obj["parentid"] == 0) || (_count == 5)){
+			this.sectionid = menu_obj["id"];
+			this.sectionname = menu_obj["pagename"];
 			//console.log (this.sectionname);
-			this.color = page["id"];
+			this.color = menu_obj["id"];
 			//return page["id"];
 		}else {
 			_count = _count + 1;
-			this.findSection(pages, page["parentid"], _count, _arr)
+			this.findSection(menu_cont, menu_obj["parentid"], _count, _arr)
 		}
 		_arr.push(_id);
+	//console.log ("_arr" , _arr)
 		return _arr;
+	}
+	/************ set menu object params using ID record and SectionID record */*////
+	/////can't remove this for some reason!!!!!'
+	findSectionwIDB(_menu_cont, _id, _count, _arr, _sectionid){
 	}
 
 	//using filter to first filter out parent pages THEN print the rest of the menu
-	////menu.filter_populateMenu(data, _menuid) call from pages-edit from result of 	
-	filter_populateMenu(pages, _menuid){
+	//menu.filter_populateMenu(cont, url_id, _sectionid);	 
+	//cont [Menu content from indexedDB], url_id (parsed querystring), _sectionid = sectionid from UserDB	
+	filter_populateMenu(menu_cont, _menuid, _sectionid, _source){
 		//add in eventlistener
 		//item.addEventListener("click", toggleItem, false);
 		var _html_menu = "";			
@@ -115,23 +158,30 @@ class Menu {
 		//-----------finds SECTION details -------------------------///
 		//iterates up the tree to find the sectionID - can use to get an Array - starting with the sectionID and each [] node down.
 		var arr = [];
-		this.findSection(pages, this.id, 0, arr); //setting the sectionid
-console.log("arr=" + arr); //array returns [4,8,10,11]  in order from top to bottom...
-
-		//console.log("this.sectionid=" + this.sectionid);
-		//console.log("this.sectionname=" + this.sectionname);
-		if (gEditView) editViewUrl = "-edit";
+		if (_source == "remote"){
+			//editViewUrl = "-edit";	
+			console.log("remote");
+			this.findSection(menu_cont, this.id, 0, arr); //setting the sectionid
+		}else{
+			console.log("IDB");
+			this.findSection(menu_cont, this.id, 0, arr, _sectionid);
+		}
+		//if (_sectionid != null) this.sectionid = _sectionid		
 		if (this.sectionname != null ){
 			titleTarget = document.getElementById('section_title');
 			titleTarget.innerHTML = this.sectionname;
 			_html_menu += "<li id=\"" + this.sectionid + "\" class=\"no-break\"><a href=\"./\">Home&nbsp;&nbsp;></a><a href=\"./pages" + editViewUrl + "?id=" + this.sectionid  + "\">&nbsp;&nbsp;Section Home</a></li>";	
-		}		
+		}else{
+			//No section ?The current URL does not match a record in the IndexedDB or the fetch
+		}
 		//check filter function		
-		var parentpages = this.filterParentPages(pages);		
+		var parentpages = this.filterRootPages(menu_cont); //will return nothing but not error if no page match		
+		//console.log("parentpages=" + parentpages);
 		var bExpandedText = "";
 		//**INFO*/this loop stops me from merging the two functions - because I quickly grab the parentpages - ie, parentid = 0 and create menu from there. 
 		//rather than passing through pages (data from fetch) and using for loop to find page objects where parentid = 0 
 		//which would allow me to merge the two functions. 
+		//console.log(parentpages)
 		for (var page of parentpages)  //looping around the parentpages
 		{
 			//[shared start]
@@ -139,12 +189,16 @@ console.log("arr=" + arr); //array returns [4,8,10,11]  in order from top to bot
 			html_count_string = "";
 			bExpandedText = "false";
 			
-			console.log("page.id=" + page.id + " this.id=" + this.id);
+			//console.log("page.id=" + page.id + " this.id=" + this.id);
 			//need to know if the page.id is a sub-or sub-sub page.etc. 
-			if(page.id == this.id) current_page = " class=\"current\" "; //can I open the parent page by using current class?
+			if(page.id == this.id) current_page = " class=\"active\" "; //can I open the parent page by using current class?
+			//if (arr[1]==page.id) console.log ("arr[1]=page.id") //8,8 and 8,9
+//console.log ("page.id=" + page.id) //8,8 and 8,9
+//console.log ("this.id" , this.id) //8,8 and 8,9	
+//console.log ("current_page=" + current_page) //8,8 and 8,9
 			if (arr[1]==page.id) bExpandedText = "true";
 			//call populateSubPages to get substring and count 
-			sCMenu = this.populateSubPages(pages, page.id, "", 0, arr); //passing through the whole pages data returned by json.fetch
+			sCMenu = this.populateSubPages(menu_cont, page.id, "", 0, arr); //passing through the whole pages data returned by json.fetch
 			//console.log("/////" + page.pagename + "|||" + sCMenu[0]+ "|||" + sCMenu[1] + "//////");
 			if (sCMenu[1] != 0 ) html_count_string = "<div class=\"right-align\">[" + sCMenu[1] + "]</div>";	
 			//aria-expanded=\"false\"  update to aria_expanded to true if arr[1]=page.id
@@ -178,16 +232,17 @@ console.log("arr=" + arr); //array returns [4,8,10,11]  in order from top to bot
 				html_count_string = "";
 				bExpandedText = "false";
 
-				console.log("page.id=" + page.id + " this.id=" + this.id);
-				if(page.id == this.id) current_page = " class=\"current\" ";
+				//console.log("page.id=" + page.id + " this.id=" + this.id);
+				if(page.id == this.id) current_page = " class=\"active\" ";
 				if (_arr[2]==page.id) bExpandedText = "true";
+				//console.log("current_page=", current_page);
 
 				//call populateSubPages to get substring and count 
 				sCMenu = this.populateSubPages(pages, page.id, "", 0, _arr); //passing through the whole pages data returned by json.fetch
 				//console.log("/////" + page.pagename + "|||" + sCMenu[0]+ "|||" + sCMenu[1] + "//////");
 				if (sCMenu[1] != 0 ) html_count_string = "<div class=\"right-align\">[" + sCMenu[1] + "]</div>";	
 				_html_menu = _html_menu + "<li id='" + page.id + "' aria-expanded=\"" + bExpandedText + "\" " + current_page + ">"  
-				_html_menu = _html_menu +	"<a onclick=\"menuItem_click(event," + page.pageid + "," + page.parentid + "," + this.sectionid + ")\" href=''" + current_page + ">" + page.pagename + html_count_string + "</a>";
+				_html_menu = _html_menu +	"<a onclick=\"menuItem_click(event," + page.pageid + "," + page.parentid + "," + this.sectionid + ")\" href='pages?id=" +  page.id + "'" + current_page + ">" + page.pagename + html_count_string + "</a>";
 				_html_menu = _html_menu + sCMenu[0];			
 				_html_menu = _html_menu + "</li>";
 				_count = _count + 1
@@ -209,7 +264,7 @@ console.log("arr=" + arr); //array returns [4,8,10,11]  in order from top to bot
 		//}
 		//need to iterate up the tree to find node with parentid = 0 
 		//if this.id.parentid = 0 then change header color. 
-	filterParentPages(pages){
+	filterRootPages(pages){
 		var parent_pages_filter = pages.filter( page => page.parentid == this.sectionid)
 		//console.log(parent_pages_filter)
 		return parent_pages_filter;

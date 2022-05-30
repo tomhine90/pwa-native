@@ -126,10 +126,15 @@ li.active ul li a{
 li[aria-expanded="false"] ul li{
 	display:none;
 }
-
-#menu #html_menu li.currentpage a.currentpage{
+.sidenav li.currentpage a{
+	font-weight:600;
+	color: #60c2d3 !important; 	
+	
+}
+li.currentpage a.currentpage{
 	/*background-color: #f0f0f0;*/
 	font-weight:600;
+	color: #60c2d3 !important; 	
 }
 #menu #html_menu li.currentpage ul{
 }

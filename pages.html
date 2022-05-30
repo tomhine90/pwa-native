@@ -13,7 +13,9 @@
 		<!--class declaration--> 
   		<script src="./js/cPage.js" ></script>
   		<script src="./js/cMenu.js" ></script>
+		<script type="text/javascript" src="./simpleIDB/SimpleIDB.js"></script>
 		<!--DOES NOT WORK FOR SUB_SUB NAVIGATION ?ARIA issue-->
+		<script src="./js/functions_data.js"></script>		
 		<script src="./js/functions_shared.js"></script>		
 		<!--include module for editor--> 
 	</head>
@@ -21,7 +23,7 @@
 		<div id="page">
 			<div class="header" id="header">
 				<!--//-->
-				<div class="text"><a href="#menu" class="menulines"><span></span></a><div id="section_title">FRCA Primary</div></div>
+				<div class="text"><a href="#menu" class="menulines"><span></span></a><div id="section_title">.....</div></div>
 				<!--//-->
 				<div id="mySidenav" class="sidenav">
 					<input type="search" name="searchbox" id="searchbox"/>
@@ -40,9 +42,21 @@
 			</div>
 			<div class="headerimage"><img src="https://stackicm.s3.eu-west-1.amazonaws.com/criticalcare3.jpg"/></div>
 			<div class="content main" id="content_main">
-				<h3></h3><br /><div id="loading_text">loading ....</div><div class="lds-hourglass" id="loader"></div>
+				<h3></h3><div id="para_loader"><p><div id="loading_text">loading ....</div><div class="lds-hourglass" id="loader"></div></p></div>
+				<!--content once the indexedDB is loaded-->
 				<p id="content">
-				  	<!--<span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span><h2 class="display_inline">Sidenav Push Example</h2>-->
+					<!--LOGIN START used on login page-->
+					<form method="post" id="loginForm">
+						<h3>Login</h3>
+		          		<label for="username">Email &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+		          		<input type="text" id="username" name="username" required><br/>
+		          		<label for="password">Password&nbsp;&nbsp;</label>
+		          		<input type="text" id="password" name="password" required><br/>&nbsp;<br/>
+	          			<button type="submit" id="submitBtn">Login</button>
+					</form>
+					<p id="passwordmessage"></p>
+					<!--LOGIN END used on login page-->
+					<!--used on content pages-->
 					<div class="element"></div>
 					<div id="questions"></div>
 				</p>
@@ -51,39 +65,100 @@
 
 <script>
 	//*****global variables set in functions_shared.js
+	var cidb = new SimpleIDB();
+	var bIsLoggedIn = false; //set this if logged in and content in IndexedDB
+	//var gDataSoure = getIDBMenuData;
+	//var gPageDataSoure = getIDBPageData;
+	var gDataSoure = getRemoteMenuData;
+	var gPageDataSoure = getRemotePageData;
+	
+	//IF YOU WANT TO GET THE DATA FROM MONGO THEN PASS getRemoteMenuData into getUserInfo AND in UserLogOut below
+	
+	//callbackFunction - specific to menu data - called from IDB OR fetch (edit)
 	window.onload = function() {
-		try {
-			getMenu(url_id);	//function in functions_shared.js	
-		}catch{
-			getMenu(1)
-		}
-		if (gEditView){
-			tinymce.init({
-				selector: '.editor-content',
-					plugins: 'table code lists fullscreen link image',
-				  	toolbar: 'undo redo | formatselect | bold italic | numlist bullist | link | image' +
-				'alignleft aligncenter alignright alignjustify | indent outdent | ' +
-				'table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol'
-			});
-		}
-		//hide loading gif...
-		//document.getElementById("loader").style.display = "none";	
-	};
-	/*******event listeners*****/
-	const contentItems = document.querySelectorAll(".content");
-	contentItems.forEach(function(cItems) {
-		//alert(cItems);
-		addEvent(cItems);
-	});				
-	document.querySelector( 'a[href="#menu"]' )
-		.addEventListener( 'click', evnt => {
-			changeNavState();
-			evnt.preventDefault();
-			//drawer.open();
-			//document.querySelector( '.mm-ocd--open' ).style.max-width = "20em";
-	});
-	/*******event listeners*****/
+		document.getElementById("para_loader").style.display = "block";
+		//check in IndexedDB - see if the sectionid passed through to pages matches the user indexedDB db
+		getUserInfo(cidb, gDataSoure); //onload just checks the user indexedDB and Menu (to make sure the user should be able to see content)	
+			//--> from getUserInfo (async) 
+			//--> if No access then calls UserLogOut()
+			//--> 		on complete calls menu
+			//--> 			on complete calls pages
 
+		/*******event listeners*****/
+		document.getElementById("loginForm").onsubmit = function(e){
+			e.preventDefault();
+			handleLoginSubmit(gDataSoure); //handleSubmit() in functions_idb.js --> fills IndexedDB with content based on login
+		}
+		const contentItems = document.querySelectorAll(".content");
+		contentItems.forEach(function(cItems) {
+			//alert(cItems);
+			addEvent(cItems);
+		});				
+		document.querySelector( 'a[href="#menu"]' )
+			.addEventListener( 'click', evnt => {
+				changeNavState();
+				evnt.preventDefault();
+				//drawer.open();
+				//document.querySelector( '.mm-ocd--open' ).style.max-width = "20em";
+		});
+		/*******event listeners*****/
+	};	
+
+//add in other features of being loggedIn
+function UserLoggedIn (){
+	document.getElementById("loginForm").style.display = "none";	
+	document.getElementById("para_loader").style.display = "none";
+}
+//add in other features of being loggedIn
+function UserLogOut(){
+	document.getElementById("loginForm").style.display = "block";	
+		deleteDatabases("user"); //delete before recreating
+		deleteDatabases("menu"); //delete before recreating
+		deleteDatabases("pages"); //delete before recreating
+		//show login form. 				
+		document.getElementById("loginForm").onsubmit = function(e){
+			e.preventDefault();
+			handleLoginSubmit(gDataSoure);
+		}
+	document.getElementById("para_loader").style.display = "none";
+}
+//********************************************************************//
+function menuItem_click(evt, _pageid, _parentid, _sectionid){
+	evt.preventDefault();
+	var parElem = evt.target.parentElement;
+	////evt.target will not bring back correct because we are preventing Default. //so does not change until we pushState
+	//alert("parElem" + parElem.id); 
+	if (parElem.getAttribute('aria-expanded') == 'false' || parElem.getAttribute('aria-expanded') ==  null) {
+		parElem.setAttribute('aria-expanded', "true");
+	} else {
+		parElem.setAttribute('aria-expanded', "false");
+		parElem.removeAttribute("class");
+	}
+	//let result2 = url.toString().includes("pages-edit");
+	if (gEditView){
+		history.pushState('data to be passed', 'Page Title', "pages-edit?id=" + parElem.id);
+	}else{
+		history.pushState('data to be passed', 'Page Title', "pages?id=" + parElem.id);
+	}		
+	//alert(evt.target); //full URL - but could check for everything after id= then getElementById .. then change colour. 
+	//pages?id=11 - which may work - because 
+	document.querySelectorAll('li').forEach(b=> {if(b.getAttribute('class')!="no-break") b.removeAttribute('class')});
+	
+	var newurl_id = window.location.toString().split("?id=").pop();
+	var newurl_idElem = document.getElementById(newurl_id);
+	//alert("window.location;" + window.location.toString());
+	//alert("newurl_id=" + newurl_id);
+	newurl_idElem.setAttribute("class", "active");
+	//if (evt.target == "testing") parElem.setAttribute("class", "active");
+	
+	if (gPageDataSoure == getRemotePageData){
+		getRemotePageData(_pageid, newurl_id, _parentid, _sectionid)
+	}else{
+		//***difference between pages.html and pages-edit.html
+		getIDBPageData(cidb, newurl_id, _pageid, _parentid, _sectionid); //getContent function in cPage class js file		
+	}
+	
+}
 </script>
 
 </body>
