@@ -1,6 +1,6 @@
 let cacheName = "pwa-app-native";
 let filesToCache = 
-["./index.html", "./pages.html","./manifest.json", "./css/pages.css","./css/site.css", "./js/cPage.js", "./js/cMenu.js", "./js/functions_editor.js", "./js/functions_shared.js", "./js/countdown.js"]; 
+["./index.html", "./pages.html","./manifest.json", "./css/pages.css","./css/site.css", "./js/cPage.js", "./js/cMenu.js", "./js/functions_data.js", "./js/functions_editor.js", "./js/functions_shared.js", "./js/countdown.js"]; 
 
 /* Start the service worker and cache all of the app's content */
 self.addEventListener("install", (e) => {
