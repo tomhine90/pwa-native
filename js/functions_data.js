@@ -176,6 +176,7 @@ function getUserSectionData(data){
 	return sectionid;
 }
 //********************GET DATA from Mongo************************///////
+//testing update
 //callbackFunction(cidb, url_id, sectionid); //called from getUserInfo above
 function getRemoteMenuData(cidb, _menuid, _sectionid){
 	//instatiate menu class  
